@@ -1,8 +1,9 @@
-﻿﻿using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -19,9 +20,23 @@ namespace MVC.Controllers
             _logger = logger;
         }
 
-        public IActionResult Index()
+        [HttpGet]
+        public async Task<IActionResult> Index()
         {
+
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction(nameof(UserIndex));
+            }
             
+            return View();
+        }
+        
+        
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> UserIndex()
+        {
             return View();
         }
 
@@ -35,13 +50,14 @@ namespace MVC.Controllers
         {
             return View(new ErrorViewModel {RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier});
         }
-        
-        
+
+
+        [HttpGet]
         [Authorize]
         public IActionResult Secret()
         {
             var claims = User.Claims;
-            var singleString = string.Join(",", claims );
+            var singleString = string.Join(",", claims);
 
 
             return Ok(new

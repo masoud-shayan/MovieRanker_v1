@@ -1,5 +1,6 @@
 ﻿﻿﻿using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+  using Microsoft.AspNetCore.Authorization;
+  using Microsoft.AspNetCore.Mvc;
 
 namespace MVC.Controllers
 {
@@ -36,12 +37,14 @@ namespace MVC.Controllers
         }
         
         [HttpGet]
+        [Authorize]
         public IActionResult Add_New_Movie()
         {
             return View();
         }
         
         [HttpPost]
+        [Authorize]
         [ValidateAntiForgeryToken]
         public IActionResult Add_New_Movie(int i)
         {

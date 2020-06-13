@@ -1,59 +1,190 @@
-﻿﻿﻿using System.Threading.Tasks;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Net.Http;
+using System.Threading.Tasks;
+using IdentityModel.Client;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using MVC.Models;
+using Newtonsoft.Json;
 
 namespace MVC.Controllers
 {
     public class User : Controller
     {
+        private readonly IWebHostEnvironment _hostEnvironment;
+        private readonly IHttpClientFactory _httpClientFactory;
+
+        public User(IWebHostEnvironment hostEnvironment, IHttpClientFactory httpClientFactory)
+        {
+            _hostEnvironment = hostEnvironment;
+            _httpClientFactory = httpClientFactory;
+        }
+
         // GET
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> Index()
         {
-            return View();
+
+            var userInfo = await GetUserInfo();
+            if (userInfo.Equals("BadRequest"))
+            {
+                return BadRequest();
+            }
+            else if (userInfo.Equals("Unauthorized"))
+            {
+                return Unauthorized();
+            }
+
+            var userInfoModel = await SetUserInfo(userInfo);
+
+            return View(userInfoModel);
         }
-        
+
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> Change_Settings()
         {
-            return View();
+            var userInfo = await GetUserInfo();
+            if (userInfo.Equals("BadRequest"))
+            {
+                return BadRequest();
+            }
+            else if (userInfo.Equals("Unauthorized"))
+            {
+                return Unauthorized();
+            }
+
+            var userInfoModel = await SetUserInfo(userInfo);
+
+            return View(userInfoModel);
         }
         
-        [HttpGet("name")]
+
+        [HttpGet("{name}")]
+        [Authorize]
         public async Task<IActionResult> Change_Settings(string name)
         {
+
+            if (name.Equals("photo"))
+            {
+                return Redirect("https://localhost:5005/Auth/UserPhoto");
+            }else if (name.Equals("email"))
+            {
+                return Redirect("https://localhost:5005/Auth/UserEmail");
+            }else if (name.Equals("password"))
+            {
+                return Redirect("https://localhost:5005/Auth/UserPassword");
+            }
+            
             return View(); // redirect to to changes in identity
         }
-        
+
         [HttpGet]
-        public  IActionResult SingOut()
+        public IActionResult SingOut()
         {
             return Redirect(nameof(Change_Settings)); // redirect to sign out in identity
         }
-        
+
         [HttpGet]
-        public  IActionResult SignIn()
+        public IActionResult SignIn()
         {
-            return Redirect(nameof(Change_Settings)); // redirect to sign in in identity
+            return Redirect("https://localhost:5005/Auth/login"); // redirect to sign in in identity
         }
-        
+
         [HttpGet]
-        public  IActionResult SignUp()
+        public IActionResult SignUp()
         {
-            return Redirect(nameof(Change_Settings)); // redirect to sign up in identity
+            return Redirect("https://localhost:5005/Auth/register"); // redirect to sign up in identity
         }
-        
-        
+
+
         [HttpGet]
         public async Task<IActionResult> Added_Movies()
         {
             return View();
         }
-        
-        
+
+
         [HttpGet]
         public async Task<IActionResult> Ranked_Movies()
         {
             return View();
+        }
+
+
+        private async Task<string> GetUserInfo()
+        {
+            string situation = "";
+
+            // get access token
+            var accessToken = await HttpContext.GetTokenAsync("access_token");
+            var idToken = await HttpContext.GetTokenAsync("id_token");
+
+
+            // find correct End-Point from IdentityServer
+            var identityServerClient1 = _httpClientFactory.CreateClient();
+
+            var discoveryDocument = await identityServerClient1.GetDiscoveryDocumentAsync("https://localhost:5005/");
+
+            if (discoveryDocument.IsError)
+            {
+                situation = "BadRequest";
+                return situation;
+            }
+
+
+            // call IdentityServer with access token to get Current logged in User Email
+            var identityServerClient2 = _httpClientFactory.CreateClient();
+
+            identityServerClient2.SetBearerToken(accessToken);
+
+            var response = await identityServerClient2.GetAsync(discoveryDocument.UserInfoEndpoint);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                situation = "Unauthorized";
+                return situation;
+            }
+
+            var userInfo = await response.Content.ReadAsStringAsync();
+
+
+            return userInfo;
+        }
+
+        private async Task<UserInfoViewModel> SetUserInfo(string userInfo)
+        {
+            var userInfoDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(userInfo);
+            Console.WriteLine(userInfoDictionary);
+            userInfoDictionary.TryGetValue("email", out string email);
+            userInfoDictionary.TryGetValue("UserImagePath", out string UserImagePath);
+
+
+            // if user has not specified any avatar
+            if (string.IsNullOrEmpty(UserImagePath))
+            {
+                // set UserImagePath to root/image/avatar.jpg
+
+                UserImagePath = "/image/avatar.jpg";
+
+                // var rootPath = _hostEnvironment.WebRootPath;
+                // UserImagePath = Path.Combine(rootPath + "/image/avatar.jpg");
+            }
+
+            var UserInfoModel = new UserInfoViewModel();
+
+
+            UserInfoModel.Email = email;
+            UserInfoModel.UserName = email.Substring(0, email.IndexOf("@"));
+            UserInfoModel.UserImagePath = UserImagePath;
+
+
+            return UserInfoModel;
         }
     }
 }

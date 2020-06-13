@@ -4,13 +4,15 @@ using System.Net.Mime;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using IdentityServer.Models;
-using Microsoft.AspNetCore.Authentication;
+ using IdentityServer4.Extensions;
+ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+ using Microsoft.Extensions.Logging;
 
-namespace IdentityServer.Controllers
+ namespace IdentityServer.Controllers
 {
     public class AuthController : Controller
     {
@@ -42,12 +44,17 @@ namespace IdentityServer.Controllers
             {
                 return View(loginViewModel);
             }
-            
-            
+
             var result = await _signInManager.PasswordSignInAsync(loginViewModel.Email, loginViewModel.Password, true , false);
             
             if (result.Succeeded)
             {
+                // return Redirect(returnUrl);
+                
+                if (returnUrl.IsNullOrEmpty())
+                {
+                    return Redirect("https://localhost:5003/Home/UserIndex");
+                }
                 return Redirect(returnUrl);
             }
             
@@ -94,12 +101,12 @@ namespace IdentityServer.Controllers
                 return View(registerViewModel);
             }
 
+            // var userNormalizer = registerViewModel.Email.Substring(0, registerViewModel.Email.IndexOf("@"));
 
             var user = new User()
             {
                 Email = registerViewModel.Email,
                 UserName = registerViewModel.Email
-                // UserName = registerViewModel.Email.Substring(0, registerViewModel.Email.IndexOf("@") )
             }; 
             
             var result = await _userManager.CreateAsync(user, registerViewModel.Password);
@@ -125,6 +132,11 @@ namespace IdentityServer.Controllers
             // await _userManager.AddToRoleAsync(user, "Visitor");
 
             await _signInManager.SignInAsync(user, false);
+            
+            if (returnUrl.IsNullOrEmpty())
+            {
+                return Redirect("https://localhost:5003/Home/UserIndex");
+            }
             return Redirect(returnUrl);
         }
 

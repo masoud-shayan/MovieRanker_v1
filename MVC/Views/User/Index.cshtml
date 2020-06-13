@@ -1,8 +1,10 @@
-﻿<div class="container">
+﻿@model UserInfoViewModel
+
+<div class="container">
     <div class="row">
         <div class="col-md-3">
             <div class="row" style="padding-bottom: 100px">
-                <img src="~/image/download.jpg" alt="User Photo" class="img-thumbnail" style="height: 220px ; width: 220px">
+                <img src="@Model.UserImagePath" alt="User Photo" class="img-thumbnail" style="height: 220px ; width: 220px">
             </div>
             <div class="row" style="height: 20px;margin-bottom: 20px">
                 <a asp-action=Change_Settings asp-controller=User>Change Settings</a>
@@ -20,11 +22,11 @@
                     <a asp-action=Ranked_Movies asp-controller=User style="padding: 20px;background-color: #eeee">Ranked Movies</a>
                 </div>
             </div>
-            <div class="row d-flex justify-content-center" style="margin-right: 200px">
-                <p style="margin-bottom: 15px">Email : ...</p>
+            <div class="row d-flex justify-content-center" >
+                <p style="margin-bottom: 15px;font-weight: bold">Email : <span style="margin-left:15px ">@Model.Email</span></p>
             </div>
-            <div class="row d-flex justify-content-center" style="margin-right: 200px">
-                <p>User Name : ...</p>
+            <div class="row d-flex justify-content-center" >
+                <p style="font-weight: bold">User Name : <span style="margin-left:15px ">@Model.UserName</span></p>
             </div>
         </div>
     </div>

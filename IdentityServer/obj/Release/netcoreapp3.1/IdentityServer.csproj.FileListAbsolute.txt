@@ -78,3 +78,6 @@ C:\Users\Alekhandr0\Desktop\dot-net-core\PracticalApps\MovieRanker_v1\MovieRanke
 C:\Users\Alekhandr0\Desktop\dot-net-core\PracticalApps\MovieRanker_v1\MovieRanker_v1\IdentityServer\obj\Release\netcoreapp3.1\IdentityServer.RazorTargetAssemblyInfo.cs
 C:\Users\Alekhandr0\Desktop\dot-net-core\PracticalApps\MovieRanker_v1\MovieRanker_v1\IdentityServer\obj\Release\netcoreapp3.1\IdentityServer.Views.pdb
 C:\Users\Alekhandr0\Desktop\dot-net-core\PracticalApps\MovieRanker_v1\MovieRanker_v1\IdentityServer\obj\Release\netcoreapp3.1\IdentityServer.csproj.CopyComplete
+C:\Users\Alekhandr0\Desktop\dot-net-core\PracticalApps\MovieRanker_v1\MovieRanker_v1\IdentityServer\obj\Release\netcoreapp3.1\Razor\Views\Auth\Logout.cshtml.g.cs
+C:\Users\Alekhandr0\Desktop\dot-net-core\PracticalApps\MovieRanker_v1\MovieRanker_v1\IdentityServer\obj\Release\netcoreapp3.1\Razor\Views\Auth\UserEmail.cshtml.g.cs
+C:\Users\Alekhandr0\Desktop\dot-net-core\PracticalApps\MovieRanker_v1\MovieRanker_v1\IdentityServer\obj\Release\netcoreapp3.1\Razor\Views\Auth\UserPassword.cshtml.g.cs

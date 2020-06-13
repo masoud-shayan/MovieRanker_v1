@@ -164,6 +164,7 @@
         <e p="Models" t="Include">
           <e p="ErrorViewModel.cs" t="Include" />
           <e p="MovieModel.cs" t="Include" />
+          <e p="UserInfoViewModel.cs" t="Include" />
           <e p="UserPhoto.cs" t="Include" />
           <e p="UserPhotoViewModel.cs" t="Include" />
         </e>
@@ -192,6 +193,7 @@
             <e p="Index.cshtml" t="Include" />
             <e p="Privacy.cshtml" t="Include" />
             <e p="Secret.cshtml" t="Include" />
+            <e p="UserIndex.cshtml" t="Include" />
           </e>
           <e p="Movie" t="Include">
             <e p="Add_New_Movie.cshtml" t="Include" />
@@ -226,6 +228,7 @@
           </e>
           <e p="favicon.ico" t="Include" />
           <e p="image" t="Include">
+            <e p="avatar.jpg" t="Include" />
             <e p="download.jpg" t="Include" />
             <e p="movie.jpg" t="Include" />
           </e>

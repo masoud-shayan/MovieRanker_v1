@@ -76,3 +76,4 @@ C:\Users\Alekhandr0\Desktop\dot-net-core\PracticalApps\MovieRanker_v1\MovieRanke
 C:\Users\Alekhandr0\Desktop\dot-net-core\PracticalApps\MovieRanker_v1\MovieRanker_v1\MVC\obj\Release\netcoreapp3.1\Razor\Views\User\Added_Movies.cshtml.g.cs
 C:\Users\Alekhandr0\Desktop\dot-net-core\PracticalApps\MovieRanker_v1\MovieRanker_v1\MVC\obj\Release\netcoreapp3.1\Razor\Views\User\Ranked_Movies.cshtml.g.cs
 C:\Users\Alekhandr0\Desktop\dot-net-core\PracticalApps\MovieRanker_v1\MovieRanker_v1\MVC\obj\Release\netcoreapp3.1\Razor\Views\Movie\Delete_Movie.cshtml.g.cs
+C:\Users\Alekhandr0\Desktop\dot-net-core\PracticalApps\MovieRanker_v1\MovieRanker_v1\MVC\obj\Release\netcoreapp3.1\Razor\Views\Home\UserIndex.cshtml.g.cs

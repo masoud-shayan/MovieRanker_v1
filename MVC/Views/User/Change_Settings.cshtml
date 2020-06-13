@@ -1,19 +1,28 @@
-﻿<div class="container">
+﻿@model UserInfoViewModel
+
+
+<div class="container">
     <div class="row">
         <div class="col-md-4">
             <h4>Change your settings :</h4>
         </div>
         <div class="col-md-5 d-flex align-items-center flex-column">
             <div class="row d-flex align-items-center justify-content-between" style="width: 350px;margin-bottom: 50px">
-                <img src="~/image/download.jpg" alt="User Photo" class="img-thumbnail" style="height: 130px ; width: 130px">
-                <a asp-action=Change_Settings asp-controller=User style="padding: 10px;background-color: #eeee" asp-route-name="photo">Change Photo</a>
+                <img src="@Model.UserImagePath" alt="User Photo" class="img-thumbnail" style="height: 130px ; width: 130px">
+                @* <form asp-controller="User" asp-action="Change_Settings" method="post"> *@
+                @*     <input type="hidden" name="name" value="photo"/> *@
+                @*     <div class="form-group"> *@
+                @*         <input type="submit" value="Change Photo" style="padding: 10px;background-color: #eeee"> *@
+                @*     </div> *@
+                @* </form> *@
+                <a asp-action=Change_Settings asp-controller=User asp style="padding: 10px;background-color: #eeee" asp-route-name="photo">Change Photo</a>
             </div>
-            <div class="row d-flex align-items-center justify-content-between" style="width: 350px; margin-bottom: 15px">
-                <p >Email : ...</p>
+            <div class="row d-flex align-items-center justify-content-between" style="width: inherit; margin-bottom: 15px">
+                <p style="margin-bottom: 15px;font-weight: bold">Email : <span style="margin-left:15px ">@Model.Email</span></p>
                 <a asp-action=Change_Settings asp-controller=User style="padding: 10px; background-color: #eeee" asp-route-name="email">Change Email</a>
             </div>
-            <div class="row d-flex align-items-center justify-content-between" style="width: 350px">
-                <p >Password : ***</p>
+            <div class="row d-flex align-items-center justify-content-between" style="width: inherit">
+                <p style="font-weight: bold" >Password : <span style="margin-left:15px ">***</span></p>
                 <a asp-action=Change_Settings asp-controller=User style="padding: 10px;background-color: #eeee" asp-route-name="password">Change Password</a>
             </div>
         </div>
