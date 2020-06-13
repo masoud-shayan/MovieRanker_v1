@@ -1,0 +1,23 @@
+﻿<div class="container">
+    <div class="row">
+        <div class="col-md-4">
+            <h4>Change your settings :</h4>
+        </div>
+        <div class="col-md-5 d-flex align-items-center flex-column">
+            <div class="row d-flex align-items-center justify-content-between" style="width: 350px;margin-bottom: 50px">
+                <img src="~/image/download.jpg" alt="User Photo" class="img-thumbnail" style="height: 130px ; width: 130px">
+                <a asp-action=Change_Settings asp-controller=User style="padding: 10px;background-color: #eeee" asp-route-name="photo">Change Photo</a>
+            </div>
+            <div class="row d-flex align-items-center justify-content-between" style="width: 350px; margin-bottom: 15px">
+                <p >Email : ...</p>
+                <a asp-action=Change_Settings asp-controller=User style="padding: 10px; background-color: #eeee" asp-route-name="email">Change Email</a>
+            </div>
+            <div class="row d-flex align-items-center justify-content-between" style="width: 350px">
+                <p >Password : ***</p>
+                <a asp-action=Change_Settings asp-controller=User style="padding: 10px;background-color: #eeee" asp-route-name="password">Change Password</a>
+            </div>
+        </div>
+        <div class="col-md-3 d-flex align-items-center flex-column">
+        </div>
+    </div>
+</div>

@@ -1,0 +1,55 @@
+﻿@* if we have movie/id  *@
+@model MovieModel
+
+
+<div class="container">
+    <div class="row movie-container d-flex justify-content-start " style="margin-bottom: 85px;background-color: #333;color: #fafafa">
+        <div class="col-md-3" style="padding: 0;margin-right: 40px">
+            <img src="~/image/movie.jpg" alt="Movie Photo" style="height: 345px;width: 280px">
+        </div>
+        <div class="col-md-8" style="padding: 0;margin: 20px 5px;">
+            <p style="font-weight: 700;font-size: 22px">Time Is The Enemy <span>(2019)</span></p>
+            <span class="fa fa-star checked" style="color: orange"></span>
+            <span style="font-weight: 700;font-size: 18px">8.3</span>
+            <span style="font-weight: 400
+            ;font-size: 12px;">/ 21,125</span>
+
+            <form asp-controller=Movie asp-action=Rank_Movie style="display: inline-block ; margin-left: 25px">
+                <div class="form-group" style="display: inline-block">
+                    @* <label asp-for="Rank" class="control-label">Rank It</label> *@
+                    <input asp-for="Rank" type="range" name="RankInputId" id="RankInputId" value="5" min="1" max="10" step="1" oninput="RankOutputId.value = RankInputId.value" min="0" max="10" step="1" value="5" class="form-control-range" style="color: #fafafa;width: 150px;display: inline-block">
+                    @* <input type="range" name="RankInputId" id="RankInputId" value="5" min="1" max="10" step="1" oninput="RankOutputId.value = RankInputId.value"> *@
+                    <output name="RankOutputId" id="RankOutputId" style="color: #fafafa; display: inline-block;color: #1b6ec2; margin-left: 2rem">5</output>
+                    <span asp-validation-for="Rank"></span>
+                </div>
+                <div class="form-group" style="text-align: center;display: inline-block; margin-left: 2rem;">
+                    <input type="submit" value="Rank" class="add-new-button" style="border: none;padding: 5px 10px;border-radius: 5px; background-color: orange">
+                </div>
+            </form>
+            
+            <p style="font-weight: 600;font-size: 18px">Sam Mendes</p>
+            <p style="height: 195px;overflow: hidden;font-size: 16px;padding-top: 5px">
+                1917 is a 2019 British war adventure film directed, co-written, and produced by Sam Mendes. The film stars George MacKay and Dean-Charles Chapman, with Mark Strong, Andrew Scott, Richard Madden, Claire Duburcq, Colin Firth and Benedict Cumberbatch in supporting roles. It is based in part on an account told to Mendes by his paternal grandfather, Alfred Mendes,[7] and tells the story of two young British soldiers during the First World War who are ordered to deliver a message calling off an attack doomed to fail soon after the German retreat to the Hindenburg Line during Operation Alberich. This message is especially important to one of the soldiers, as his brother is due to take part in the attack.
+
+                The project was officially announced in June 2018, with MacKay and Chapman signing on in October and the rest of the cast the following March. Filming took place from April to June 2019 in the UK, with cinematographer Roger Deakins and editor Lee Smith using long takes to have the entire film appear as two continuous shots.[8][9][10]
+            </p>
+        </div>
+    </div>
+
+    <div class="row d-flex justify-content-center" style="margin-bottom: 40px">
+        <div class="col-md-4 d-flex justify-content-center">
+            <a href="Movie/12/Who_Added_It" class="add-new-button">who added it ? &#8594; / you Added this movie </a>
+        </div>
+        <div class="col-md-4 d-flex justify-content-center">
+            <a href="Movie/12/Who_Ranked_It" class="add-new-button">who has been ranked? &#8594;</a>
+        </div>
+    </div>
+  
+    <div class="row d-flex justify-content-center">
+        <form asp-controller=Movie asp-action=Delete_Movie>
+            <div class="form-group" style="text-align: center;display: inline-block; margin-left: 2rem;">
+                <input type="submit" value="Delete!" class="add-new-button" style="border: none;padding: 5px 10px;border-radius: 5px; background-color: red; font-weight: 500;font-family: monospace;">
+            </div>
+        </form>
+    </div>
+</div>

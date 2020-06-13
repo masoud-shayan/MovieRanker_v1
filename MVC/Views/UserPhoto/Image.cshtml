@@ -1,0 +1,23 @@
+﻿﻿@* @model MVC.Models.UserImageViewModel *@
+@* *@
+@* *@
+@* <h1>Add image profile</h1> *@
+@* *@
+@* *@
+@* *@
+@* <div class="row"> *@
+@*     <div class="col-md-4"> *@
+@*         <form asp-controller=UserImage  asp-action=Image enctype="multipart/form-data"> *@
+@*             <div asp-validation-summary="ModelOnly" class="text-danger"></div> *@
+@*             <div class="form-group"> *@
+@*                 <label asp-for="UserImageFile" class="control-label"></label> *@
+@*                 $1$ <input asp-for="UserImageFile" accept="image/*" class="form-control"> #1# *@
+@*                 <input asp-for="UserImageFile" accept="image/*"> *@
+@*                 <span asp-validation-for="UserImageFile" class="text-danger"></span> *@
+@*             </div> *@
+@*             <div class="form-group"> *@
+@*                 <input type="submit" value="Add" class="btn btn-primary"> *@
+@*             </div> *@
+@*         </form> *@
+@*     </div> *@
+@* </div> *@

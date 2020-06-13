@@ -1,0 +1,60 @@
+﻿a {
+    border-radius: 5px;
+    color: #4e555b;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+p {
+    margin: 0;
+}
+
+
+div.row.movies-container {
+    justify-content: start;
+    padding: 0;
+    background-color: #fafafa;
+    margin: 0px;
+    margin-bottom: 15px;
+    box-shadow: -1px 28px 82px -17px rgba(0,0,0,0.75);
+    transition: all .15s ease-out;
+}
+
+div.row.movies-container:hover {
+    transform: scale(1.03);
+    cursor: pointer;
+    color: black;
+}
+
+a.movies-container-link {
+    color: black;
+}
+
+a.movies-container-link:hover {
+    text-decoration: none;
+    color: black !important;
+}
+
+
+a.add-new-button {
+    display: inline-block;
+    background-color: #eeee;
+    border-radius: .25rem;
+    text-align: center;
+    vertical-align: middle;
+    padding: 5px 7px;
+    box-shadow: -1px 28px 82px -17px rgba(0,0,0,0.75);
+
+}
+
+a.add-new-button:hover {
+    text-decoration: none;
+    color: black !important;
+}
+
+div.row.movie-container {
+    box-shadow: -1px 28px 82px -17px rgba(0,0,0,0.75);
+
+}

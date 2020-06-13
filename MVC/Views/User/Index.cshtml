@@ -1,0 +1,31 @@
+﻿<div class="container">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="row" style="padding-bottom: 100px">
+                <img src="~/image/download.jpg" alt="User Photo" class="img-thumbnail" style="height: 220px ; width: 220px">
+            </div>
+            <div class="row" style="height: 20px;margin-bottom: 20px">
+                <a asp-action=Change_Settings asp-controller=User>Change Settings</a>
+            </div>
+            <div class="row" style="height: 20px">
+                <a asp-action=SingOut asp-controller=User>Sign Out</a>
+            </div>
+        </div>
+        <div class="col-md-5">
+            <div class="row" style="padding-bottom: 70px" >
+                <div class="col-md-6 d-flex justify-content-center">
+                    <a asp-action=Added_Movies asp-controller=User style="padding: 20px;background-color: #eeee">Added Movies</a>
+                </div>
+                <div class="col-md-6 d-flex justify-content-center">
+                    <a asp-action=Ranked_Movies asp-controller=User style="padding: 20px;background-color: #eeee">Ranked Movies</a>
+                </div>
+            </div>
+            <div class="row d-flex justify-content-center" style="margin-right: 200px">
+                <p style="margin-bottom: 15px">Email : ...</p>
+            </div>
+            <div class="row d-flex justify-content-center" style="margin-right: 200px">
+                <p>User Name : ...</p>
+            </div>
+        </div>
+    </div>
+</div>
