@@ -35,10 +35,10 @@ namespace MVC
             
             services.AddAuthentication(options =>
                 {
-                    options.DefaultScheme = "Cookies";
+                    options.DefaultScheme = "Cookie";
                     options.DefaultChallengeScheme = "oidc";
                 })
-                .AddCookie("Cookies")
+                .AddCookie("Cookie")
                 .AddOpenIdConnect("oidc", options =>
                 {
                     options.Authority = "https://localhost:5005";
@@ -47,6 +47,7 @@ namespace MVC
                     options.ClientId = "ClientId_MVC";
                     options.ClientSecret = "ClientSecret_MVC";
                     options.ResponseType = "code";
+                    options.SignedOutCallbackPath = "/Home/Index";
             
                     options.SaveTokens = true;
                     

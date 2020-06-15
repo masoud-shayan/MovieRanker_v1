@@ -6,10 +6,9 @@ namespace IdentityServer.Models
     public class UserPhotoViewModel
     {
         
-        [Required(ErrorMessage = "Please Upload a Valid Image File.")]
-        [Display(Name = "Upload User Image")]
+        [Required(ErrorMessage = "Please select a file.")]
         [DataType(DataType.Upload)]
-        [FileExtensions(Extensions ="jpg,png,gif,jpeg,bmp")]
+        // [FileExtensions(Extensions ="jpg,png,gif,jpeg,bmp")]
         public IFormFile UserImageFile { get; set; }
     }
 }

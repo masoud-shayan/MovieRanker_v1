@@ -17,19 +17,19 @@
           <e p="AppDbContext.cs" t="Include" />
           <e p="Migrations" t="Include">
             <e p="AppMigrations" t="Include">
-              <e p="20200608215707_Initial.cs" t="Include" />
-              <e p="20200608215707_Initial.Designer.cs" t="Include" />
+              <e p="20200615135803_Initial.cs" t="Include" />
+              <e p="20200615135803_Initial.Designer.cs" t="Include" />
               <e p="AppDbContextModelSnapshot.cs" t="Include" />
             </e>
             <e p="IdentityServer" t="Include">
               <e p="ConfigurationDb" t="Include">
-                <e p="20200608215632_InitialIdentityServerConfigurationDbMigration.cs" t="Include" />
-                <e p="20200608215632_InitialIdentityServerConfigurationDbMigration.Designer.cs" t="Include" />
+                <e p="20200615135726_InitialIdentityServerConfigurationDbMigration.cs" t="Include" />
+                <e p="20200615135726_InitialIdentityServerConfigurationDbMigration.Designer.cs" t="Include" />
                 <e p="ConfigurationDbContextModelSnapshot.cs" t="Include" />
               </e>
               <e p="PersistedGrantDb" t="Include">
-                <e p="20200608215610_InitialIdentityServerPersistedGrantDbMigration.cs" t="Include" />
-                <e p="20200608215610_InitialIdentityServerPersistedGrantDbMigration.Designer.cs" t="Include" />
+                <e p="20200615135706_InitialIdentityServerPersistedGrantDbMigration.cs" t="Include" />
+                <e p="20200615135706_InitialIdentityServerPersistedGrantDbMigration.Designer.cs" t="Include" />
                 <e p="PersistedGrantDbContextModelSnapshot.cs" t="Include" />
               </e>
             </e>
@@ -54,7 +54,6 @@
             </e>
           </e>
         </e>
-        <e p="photo_۲۰۱۹-۰۴-۱۸_۲۱-۲۴-۵۵20251436679.jpg" t="Include" />
         <e p="Program.cs" t="Include" />
         <e p="Properties" t="Include">
           <e p="launchSettings.json" t="Include" />
@@ -91,9 +90,7 @@
             <e p="site.css" t="Include" />
           </e>
           <e p="favicon.ico" t="Include" />
-          <e p="image" t="Include">
-            <e p="scane182-120111543367.jpg" t="Include" />
-          </e>
+          <e p="image" t="Include" />
           <e p="js" t="Include">
             <e p="site.js" t="Include" />
           </e>

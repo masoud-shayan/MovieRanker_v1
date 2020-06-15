@@ -5,6 +5,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using IdentityServer.Models;
 using IdentityServer4.Extensions;
+using IdentityServer4.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
@@ -19,14 +20,16 @@ namespace IdentityServer.Controllers
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
         private readonly IWebHostEnvironment _hostEnvironment;
+        private readonly IIdentityServerInteractionService _interactionService;
 
 
         public AuthController(UserManager<User> userManager, SignInManager<User> signInManager,
-            IWebHostEnvironment hostEnvironment)
+            IWebHostEnvironment hostEnvironment , IIdentityServerInteractionService interactionService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _hostEnvironment = hostEnvironment;
+            _interactionService = interactionService;
         }
 
         [HttpGet]
@@ -184,9 +187,24 @@ namespace IdentityServer.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UserPhoto(UserPhotoViewModel userPhotoViewModel)
         {
-            // look at database for same photo
+
+            // -------- image file validations
+            if (!ModelState.IsValid)
+            {
+                return View(userPhotoViewModel);
+            }
             
+            var ext = Path.GetExtension(userPhotoViewModel.UserImageFile.FileName);
             
+            if (!ext.Equals(".jpg") && !ext.Equals(".png") && !ext.Equals(".jpeg") && !ext.Equals(".bmp") )
+            {
+                ModelState.TryAddModelError("", "The Image File  only accepts files with the following extensions: .jpg, .png, .jpeg, .bmp");
+            
+                return View(userPhotoViewModel);
+            }
+
+
+
             // save image to root/image
             var rootPath = _hostEnvironment.WebRootPath;
             var fileName = Path.GetFileNameWithoutExtension(userPhotoViewModel.UserImageFile.FileName);
@@ -198,24 +216,22 @@ namespace IdentityServer.Controllers
             {
                 await userPhotoViewModel.UserImageFile.CopyToAsync(fileStream);
             }
-            
-            
-            
+
+
             var currentUser = await _userManager.GetUserAsync(User);
 
-            
-            
+
             // ------- delete previous image from root/image if exists
             var previousImage = currentUser.UserImagePath;
             if (!string.IsNullOrEmpty(previousImage))
             {
-                if(System.IO.File.Exists(previousImage))
+                if (System.IO.File.Exists(previousImage))
                 {
                     System.IO.File.Delete(previousImage);
                 }
             }
 
-            
+
             // ------- save image path in database
             // var currentUser = await _userManager.GetUserAsync(User);
             currentUser.UserImagePath = path;
@@ -229,6 +245,30 @@ namespace IdentityServer.Controllers
             return Redirect("https://localhost:5003/User/Change_Settings");
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteUserPhoto()
+        {
+            // ------- find User Image Path 
+            var currentUser = await _userManager.GetUserAsync(User);
+            var currentImagePath = currentUser?.UserImagePath;
+
+            // ------- delete it from file system
+            if (!string.IsNullOrEmpty(currentImagePath))
+            {
+                if (System.IO.File.Exists(currentImagePath))
+                {
+                    System.IO.File.Delete(currentImagePath);
+                }
+            }
+
+            // ------ delete if from Database 
+
+            currentUser.UserImagePath = "";
+            await _userManager.UpdateAsync(currentUser);
+
+            return Redirect("https://localhost:5003/User/Change_Settings");
+        }
 
         // change the Email
         [HttpGet]
@@ -259,11 +299,19 @@ namespace IdentityServer.Controllers
             return View();
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Logout()
+        [HttpGet]
+        public async Task<IActionResult> Logout(string logoutId)
         {
-            return View();
+            await _signInManager.SignOutAsync();
+
+            var logoutRequest = await _interactionService.GetLogoutContextAsync(logoutId);
+
+            if (string.IsNullOrEmpty(logoutRequest.PostLogoutRedirectUri))
+            {
+                return Redirect("https://localhost:5003/Home/Index");
+            }
+            
+            return Redirect(logoutRequest.PostLogoutRedirectUri);
         }
     }
 }

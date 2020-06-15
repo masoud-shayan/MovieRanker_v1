@@ -64,7 +64,7 @@ namespace IdentityServer
                     RedirectUris = { "https://localhost:5003/signin-oidc" },
 
                     // where to redirect to after logout
-                    PostLogoutRedirectUris = { "https://localhost:5003/signout-callback-oidc" },
+                    PostLogoutRedirectUris = { "https://localhost:5003/Home/Index" },
                     
                     RequireConsent = false,
 

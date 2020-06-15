@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
+using System.Reflection.Metadata.Ecma335;
 using System.Threading.Tasks;
 using IdentityModel.Client;
 using Microsoft.AspNetCore.Authentication;
@@ -87,7 +88,8 @@ namespace MVC.Controllers
         [HttpGet]
         public IActionResult SingOut()
         {
-            return Redirect(nameof(Change_Settings)); // redirect to sign out in identity
+            // return Redirect(nameof(Change_Settings)); // redirect to sign out in identity
+            return SignOut("Cookie", "oidc");
         }
 
         [HttpGet]
@@ -160,7 +162,6 @@ namespace MVC.Controllers
         private async Task<UserInfoViewModel> SetUserInfo(string userInfo)
         {
             var userInfoDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(userInfo);
-            Console.WriteLine(userInfoDictionary);
             userInfoDictionary.TryGetValue("email", out string email);
             userInfoDictionary.TryGetValue("UserImagePath", out string UserImagePath);
 
@@ -181,13 +182,13 @@ namespace MVC.Controllers
             }
             else
             {
-                Console.WriteLine("old :  "+UserImagePath );
                 string toBeSearched = "wwwroot";
                 userImagePathNormalizer = UserImagePath.Substring(UserImagePath.IndexOf(toBeSearched) + toBeSearched.Length);
                 userImagePathNormalizer = Path.Combine("https://localhost:5005",userImagePathNormalizer);
-                userImagePathNormalizer = userImagePathNormalizer.Replace(@"\",@"/");
+                userImagePathNormalizer = "https://localhost:5005/"+userImagePathNormalizer.Replace(@"\",@"/");
                 
-                Console.WriteLine("new :  "+userImagePathNormalizer );
+                
+                
 
             }
 
