@@ -54,6 +54,7 @@
             </e>
           </e>
         </e>
+        <e p="photo_۲۰۱۹-۰۴-۱۸_۲۱-۲۴-۵۵20251436679.jpg" t="Include" />
         <e p="Program.cs" t="Include" />
         <e p="Properties" t="Include">
           <e p="launchSettings.json" t="Include" />
@@ -90,7 +91,9 @@
             <e p="site.css" t="Include" />
           </e>
           <e p="favicon.ico" t="Include" />
-          <e p="image" t="Include" />
+          <e p="image" t="Include">
+            <e p="scane182-120111543367.jpg" t="Include" />
+          </e>
           <e p="js" t="Include">
             <e p="site.js" t="Include" />
           </e>

@@ -164,16 +164,31 @@ namespace MVC.Controllers
             userInfoDictionary.TryGetValue("email", out string email);
             userInfoDictionary.TryGetValue("UserImagePath", out string UserImagePath);
 
+            var userImagePathNormalizer = "";
+
 
             // if user has not specified any avatar
             if (string.IsNullOrEmpty(UserImagePath))
             {
-                // set UserImagePath to root/image/avatar.jpg
+                //------ set UserImagePath to root/image/avatar.jpg
 
-                UserImagePath = "/image/avatar.jpg";
+                //------ on development
+                userImagePathNormalizer = "/image/avatar.jpg";
 
+                //------- on production
                 // var rootPath = _hostEnvironment.WebRootPath;
                 // UserImagePath = Path.Combine(rootPath + "/image/avatar.jpg");
+            }
+            else
+            {
+                Console.WriteLine("old :  "+UserImagePath );
+                string toBeSearched = "wwwroot";
+                userImagePathNormalizer = UserImagePath.Substring(UserImagePath.IndexOf(toBeSearched) + toBeSearched.Length);
+                userImagePathNormalizer = Path.Combine("https://localhost:5005",userImagePathNormalizer);
+                userImagePathNormalizer = userImagePathNormalizer.Replace(@"\",@"/");
+                
+                Console.WriteLine("new :  "+userImagePathNormalizer );
+
             }
 
             var UserInfoModel = new UserInfoViewModel();
@@ -181,7 +196,8 @@ namespace MVC.Controllers
 
             UserInfoModel.Email = email;
             UserInfoModel.UserName = email.Substring(0, email.IndexOf("@"));
-            UserInfoModel.UserImagePath = UserImagePath;
+            UserInfoModel.UserImagePath = userImagePathNormalizer;
+            
 
 
             return UserInfoModel;

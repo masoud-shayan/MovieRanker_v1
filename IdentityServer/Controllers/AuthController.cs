@@ -1,18 +1,18 @@
-﻿﻿using System;
+﻿using System;
 using System.IO;
 using System.Net.Mime;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using IdentityServer.Models;
- using IdentityServer4.Extensions;
- using Microsoft.AspNetCore.Authentication;
+using IdentityServer4.Extensions;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
- using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 
- namespace IdentityServer.Controllers
+namespace IdentityServer.Controllers
 {
     public class AuthController : Controller
     {
@@ -21,7 +21,8 @@ using Microsoft.AspNetCore.Mvc;
         private readonly IWebHostEnvironment _hostEnvironment;
 
 
-        public AuthController(UserManager<User> userManager, SignInManager<User> signInManager , IWebHostEnvironment hostEnvironment)
+        public AuthController(UserManager<User> userManager, SignInManager<User> signInManager,
+            IWebHostEnvironment hostEnvironment)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -40,24 +41,26 @@ using Microsoft.AspNetCore.Mvc;
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel loginViewModel, string returnUrl)
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return View(loginViewModel);
             }
 
-            var result = await _signInManager.PasswordSignInAsync(loginViewModel.Email, loginViewModel.Password, true , false);
-            
+            var result =
+                await _signInManager.PasswordSignInAsync(loginViewModel.Email, loginViewModel.Password, true, false);
+
             if (result.Succeeded)
             {
                 // return Redirect(returnUrl);
-                
+
                 if (returnUrl.IsNullOrEmpty())
                 {
                     return Redirect("https://localhost:5003/Home/UserIndex");
                 }
+
                 return Redirect(returnUrl);
             }
-            
+
             // Added to active Lockout feature if the LockoutEnabled == 1 in DB
             if (result.IsLockedOut)
             {
@@ -66,13 +69,13 @@ using Microsoft.AspNetCore.Mvc;
                 ModelState.AddModelError("", "there is no IsLockedOut mechanism");
                 return View();
             }
-            
+
             // Added to active 2 step Verification if the TwoFactorEnabled == 1 in DB
-            if(result.RequiresTwoFactor)
+            if (result.RequiresTwoFactor)
             {
                 // just for avoiding compiler return error
                 ModelState.AddModelError("", "there is no RequiresTwoFactor mechanism");
-                return View();            
+                return View();
             }
             else
             {
@@ -80,10 +83,8 @@ using Microsoft.AspNetCore.Mvc;
                 return View();
             }
         }
-        
-        
-        
-        
+
+
         [HttpGet]
         public IActionResult Register(string returnUrl)
         {
@@ -96,7 +97,7 @@ using Microsoft.AspNetCore.Mvc;
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterViewModel registerViewModel, string returnUrl)
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return View(registerViewModel);
             }
@@ -107,21 +108,21 @@ using Microsoft.AspNetCore.Mvc;
             {
                 Email = registerViewModel.Email,
                 UserName = registerViewModel.Email
-            }; 
-            
+            };
+
             var result = await _userManager.CreateAsync(user, registerViewModel.Password);
-            
-            if(!result.Succeeded)
+
+            if (!result.Succeeded)
             {
                 foreach (var error in result.Errors)
                 {
                     ModelState.TryAddModelError(error.Code, error.Description);
                 }
- 
+
                 return View(registerViewModel);
             }
-            
-            
+
+
             // var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             // var confirmationLink = Url.Action(nameof(ConfirmEmail), "Account", new { token, email = user.Email }, Request.Scheme);
             //
@@ -132,21 +133,21 @@ using Microsoft.AspNetCore.Mvc;
             // await _userManager.AddToRoleAsync(user, "Visitor");
 
             await _signInManager.SignInAsync(user, false);
-            
+
             if (returnUrl.IsNullOrEmpty())
             {
                 return Redirect("https://localhost:5003/Home/UserIndex");
             }
+
             return Redirect(returnUrl);
         }
 
-        
+
         // change or set UserPhoto
         [HttpGet]
         // [Authorize]
         public async Task<IActionResult> UserPhoto()
         {
-            
             // just for commenting to know !!
             // var email1 = HttpContext.User.FindFirst("email")?.Value;
             // var email2 = _signInManager.Context.User.FindFirst("email").Value;
@@ -161,72 +162,103 @@ using Microsoft.AspNetCore.Mvc;
             // {
             //     email3
             // });
-            
+
+            var applicationUser = await _userManager.GetUserAsync(User);
+            var userPhoto = applicationUser?.UserImagePath;
+
+            if (!string.IsNullOrEmpty(userPhoto))
+            {
+                string toBeSearched = "wwwroot";
+                string imagePathNormalizer = userPhoto.Substring(userPhoto.IndexOf(toBeSearched) + toBeSearched.Length);
+                ViewBag.UserImagePath = imagePathNormalizer;
+            }
+            else
+            {
+                ViewBag.UserImagePath = "";
+            }
+
             return View();
         }
-        
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UserPhoto(UserPhotoViewModel userPhotoViewModel)
         {
-                // save image to root/image
-                var rootPath = _hostEnvironment.WebRootPath;
-                var fileName = Path.GetFileNameWithoutExtension(userPhotoViewModel.UserImageFile.FileName);
-                var extension = Path.GetExtension(userPhotoViewModel.UserImageFile.FileName);
-                var userPhotoName = fileName + DateTime.Now.ToString("yymmddssfff") + extension;
-                var path = Path.Combine(rootPath + "/image/" + userPhotoName);
+            // look at database for same photo
             
-                using (var fileStream = new FileStream(path , FileMode.Create))
+            
+            // save image to root/image
+            var rootPath = _hostEnvironment.WebRootPath;
+            var fileName = Path.GetFileNameWithoutExtension(userPhotoViewModel.UserImageFile.FileName);
+            var extension = Path.GetExtension(userPhotoViewModel.UserImageFile.FileName);
+            var userPhotoName = fileName + DateTime.Now.ToString("yymmddssfff") + extension;
+            string path = Path.Combine(rootPath, "image", userPhotoName);
+
+            using (var fileStream = new FileStream(path, FileMode.Create))
+            {
+                await userPhotoViewModel.UserImageFile.CopyToAsync(fileStream);
+            }
+            
+            
+            
+            var currentUser = await _userManager.GetUserAsync(User);
+
+            
+            
+            // ------- delete previous image from root/image if exists
+            var previousImage = currentUser.UserImagePath;
+            if (!string.IsNullOrEmpty(previousImage))
+            {
+                if(System.IO.File.Exists(previousImage))
                 {
-                    await userPhotoViewModel.UserImageFile.CopyToAsync(fileStream);
+                    System.IO.File.Delete(previousImage);
                 }
-                
-                // save image path in database
-                
-                var currentUser = await _userManager.GetUserAsync(User);
-                currentUser.UserImagePath = path;
-               await _userManager.UpdateAsync(currentUser);
-                
-                
-                // UserImage userImage = new UserImage();
-                // userImage.ImageFileName = userImageViewModel.ImageName;
-                // await  _context.AddAsync(userImage);
-                // await _context.SaveChangesAsync();
-                return Redirect("https://localhost:5003/userphoto/photo"); 
+            }
+
+            
+            // ------- save image path in database
+            // var currentUser = await _userManager.GetUserAsync(User);
+            currentUser.UserImagePath = path;
+            await _userManager.UpdateAsync(currentUser);
+
+
+            // UserImage userImage = new UserImage();
+            // userImage.ImageFileName = userImageViewModel.ImageName;
+            // await  _context.AddAsync(userImage);
+            // await _context.SaveChangesAsync();
+            return Redirect("https://localhost:5003/User/Change_Settings");
         }
-        
-        
-        
+
+
         // change the Email
         [HttpGet]
         public async Task<IActionResult> UserEmail()
         {
             return View();
         }
-        
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UserEmail(int i)
         {
             return View();
         }
-        
-        
-        
+
+
         // change the password
         [HttpGet]
         public async Task<IActionResult> UserPassword()
         {
             return View();
         }
-        
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UserPassword(int i)
         {
             return View();
         }
-        
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
