@@ -70,6 +70,9 @@
         </e>
         <e p="Startup.cs" t="Include" />
         <e p="tempkey.rsa" t="Include" />
+        <e p="Validators" t="Include">
+          <e p="NotEqualAttribute.cs" t="Include" />
+        </e>
         <e p="Views" t="Include">
           <e p="_ViewImports.cshtml" t="Include" />
           <e p="_ViewStart.cshtml" t="Include" />
@@ -82,6 +85,7 @@
             <e p="UserEmail.cshtml" t="Include" />
             <e p="UserEmailConfirm.cshtml" t="Include" />
             <e p="UserPassword.cshtml" t="Include" />
+            <e p="UserPasswordConfirm.cshtml" t="Include" />
             <e p="UserPhoto.cshtml" t="Include" />
           </e>
           <e p="Home" t="Include">

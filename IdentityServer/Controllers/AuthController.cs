@@ -294,10 +294,7 @@ namespace IdentityServer.Controllers
             // ------- get user object from the storage
             var applicationUser = await _userManager.GetUserAsync(User);
             
-            // await _userManager.UpdateAsync(applicationUser);
-            
-            // var currentEmail = applicationUser?.Email;
-            // var newEmail = userEmailViewModel.NewEmail;
+
 
             if (applicationUser?.Email == userEmailViewModel.Email )
             {
@@ -347,7 +344,7 @@ namespace IdentityServer.Controllers
         }
 
 
-        // change the password
+        // -------- change the password
         [HttpGet]
         public async Task<IActionResult> UserPassword()
         {
@@ -356,7 +353,49 @@ namespace IdentityServer.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UserPassword(int i)
+        public async Task<IActionResult> UserPassword(UserPasswordViewModel userPasswordViewModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(userPasswordViewModel);
+            }
+
+            // ------- get user object from the storage
+            var applicationUser = await _userManager.GetUserAsync(User);
+            
+
+
+            if (applicationUser?.Email == userPasswordViewModel.Email)
+            {
+                var result = await _userManager.CheckPasswordAsync(applicationUser, userPasswordViewModel.Password);
+                if (result)
+                {
+                   var changePasswordResult = await _userManager.ChangePasswordAsync(applicationUser, userPasswordViewModel.Password, userPasswordViewModel.NewPassword);
+                   if (changePasswordResult.Succeeded)
+                   {
+                       return RedirectToAction(nameof(UserPasswordConfirm));
+                   }
+                   else
+                   {
+                       return BadRequest();
+                   }
+                }
+                else
+                {
+                    ModelState.TryAddModelError("", "your credentials are incorrect");
+            
+                    return View(userPasswordViewModel);
+                }
+            }
+
+
+            ModelState.TryAddModelError("", "your credentials are incorrect");
+            
+            return View(userPasswordViewModel);
+        }
+
+        [HttpGet]
+        public IActionResult UserPasswordConfirm()
         {
             return View();
         }

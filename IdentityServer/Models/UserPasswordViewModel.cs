@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using IdentityServer.Validators;
 
 namespace IdentityServer.Models
 {
@@ -15,6 +16,8 @@ namespace IdentityServer.Models
         
         [Required]
         [DataType(DataType.Password)]
+        // [Compare("Password", ErrorMessage = "the Password and the NewPassword must be the same.")]
+        [NotEqual("Password")]
         public string NewPassword { get; set; }
     }
 }

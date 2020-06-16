@@ -88,3 +88,4 @@ C:\Users\Alekhandr0\Desktop\dot-net-core\PracticalApps\MovieRanker_v1\MovieRanke
 C:\Users\Alekhandr0\Desktop\dot-net-core\PracticalApps\MovieRanker_v1\MovieRanker_v1\IdentityServer\obj\Release\netcoreapp3.1\Razor\Views\Auth\SuccessUserEmail.cshtml.g.cs
 C:\Users\Alekhandr0\Desktop\dot-net-core\PracticalApps\MovieRanker_v1\MovieRanker_v1\IdentityServer\obj\Release\netcoreapp3.1\Razor\Views\Auth\Error.cshtml.g.cs
 C:\Users\Alekhandr0\Desktop\dot-net-core\PracticalApps\MovieRanker_v1\MovieRanker_v1\IdentityServer\obj\Release\netcoreapp3.1\Razor\Views\Auth\UserEmailConfirm.cshtml.g.cs
+C:\Users\Alekhandr0\Desktop\dot-net-core\PracticalApps\MovieRanker_v1\MovieRanker_v1\IdentityServer\obj\Release\netcoreapp3.1\Razor\Views\Auth\UserPasswordConfirm.cshtml.g.cs
