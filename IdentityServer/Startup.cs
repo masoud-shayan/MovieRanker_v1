@@ -4,6 +4,7 @@
 
 using System.Reflection;
 using IdentityServer.Data;
+using IdentityServer.EmailService;
 using IdentityServer.Models;
 using IdentityServer.Services;
 using IdentityServer4.EntityFramework.DbContexts;
@@ -89,6 +90,16 @@ namespace IdentityServer
             builder.AddDeveloperSigningCredential();
             
             services.AddScoped<IProfileService, ProfileService>();
+            
+            
+            // register email service
+            var emailConfig = _configuration
+                .GetSection("EmailConfiguration")
+                .Get<EmailConfiguration>();
+            services.AddSingleton(emailConfig);
+            services.AddScoped<IEmailSender, EmailSender>();
+            
+            
             
             // uncomment, if you want to add an MVC-based UI
             services.AddControllersWithViews();

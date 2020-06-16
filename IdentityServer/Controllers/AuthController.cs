@@ -3,6 +3,7 @@ using System.IO;
 using System.Net.Mime;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using IdentityServer.EmailService;
 using IdentityServer.Models;
 using IdentityServer4.Extensions;
 using IdentityServer4.Services;
@@ -21,15 +22,19 @@ namespace IdentityServer.Controllers
         private readonly SignInManager<User> _signInManager;
         private readonly IWebHostEnvironment _hostEnvironment;
         private readonly IIdentityServerInteractionService _interactionService;
+        private readonly IEmailSender _emailSender;
+
 
 
         public AuthController(UserManager<User> userManager, SignInManager<User> signInManager,
-            IWebHostEnvironment hostEnvironment , IIdentityServerInteractionService interactionService)
+            IWebHostEnvironment hostEnvironment , IIdentityServerInteractionService interactionService , IEmailSender emailSender)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _hostEnvironment = hostEnvironment;
             _interactionService = interactionService;
+            _emailSender = emailSender;
+
         }
 
         [HttpGet]
@@ -279,9 +284,66 @@ namespace IdentityServer.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UserEmail(int i)
+        public async Task<IActionResult> UserEmail(UserEmailViewModel userEmailViewModel)
         {
-            return View();
+            if (!ModelState.IsValid)
+            {
+                return View(userEmailViewModel);
+            }
+            
+            // ------- get user object from the storage
+            var applicationUser = await _userManager.GetUserAsync(User);
+            
+            // await _userManager.UpdateAsync(applicationUser);
+            
+            // var currentEmail = applicationUser?.Email;
+            // var newEmail = userEmailViewModel.NewEmail;
+
+            if (applicationUser?.Email == userEmailViewModel.Email )
+            {
+                var result = await _userManager.CheckPasswordAsync(applicationUser, userEmailViewModel.Password);
+                if (result)
+                {
+
+                    var token = await _userManager.GenerateChangeEmailTokenAsync(applicationUser, userEmailViewModel.NewEmail);
+                    var confirmationLink = Url.Action(nameof(UserEmailConfirm), "Auth", new { token, email = userEmailViewModel.NewEmail }, Request.Scheme);
+ 
+                    var message = new Message(new string[] { applicationUser?.Email }, "Confirmation email link", confirmationLink, null);
+                    await _emailSender.SendEmailAsync(message);
+                    
+                    return RedirectToAction(nameof(SuccessUserEmail));
+
+                }
+                else
+                {
+                    ModelState.TryAddModelError("", "your credentials are incorrect");
+            
+                    return View(userEmailViewModel);
+                }
+            }
+            
+            ModelState.TryAddModelError("", "your credentials are incorrect");
+            
+            return View(userEmailViewModel);
+        }
+        
+        [HttpGet]
+        public async Task<IActionResult> UserEmailConfirm(string token, string email)
+        {
+            
+            var applicationUser = await _userManager.GetUserAsync(User);
+ 
+            
+            var result = await _userManager.ChangeEmailAsync(applicationUser ,email , token );
+            if (result.Succeeded)
+            {
+                applicationUser.UserName = email;
+                await _userManager.UpdateAsync(applicationUser);
+
+            }
+            
+        
+            return View(result.Succeeded ? nameof(UserEmailConfirm) : "Error");
         }
 
 
@@ -312,6 +374,18 @@ namespace IdentityServer.Controllers
             }
             
             return Redirect(logoutRequest.PostLogoutRedirectUri);
+        }
+
+        [HttpGet]
+        public IActionResult SuccessUserEmail()
+        {
+            return View();
+        }
+        
+        [HttpGet]
+        public IActionResult Error()
+        {
+            return View();
         }
     }
 }

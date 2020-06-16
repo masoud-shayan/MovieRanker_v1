@@ -6,7 +6,7 @@
 
 <div class="row">
     <div class="col-md-4">
-        <form asp-controller="Auth" asp-action=Login asp-route-returnUrl="@ViewData["ReturnUrl"]">
+        <form asp-controller="Auth" asp-action=UserEmail asp-route-returnUrl="@ViewData["ReturnUrl"]">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Email" class="control-label"></label>
@@ -27,6 +27,5 @@
                 <input type="submit" value="Change" class="btn btn-primary">
             </div>
         </form>
-        <a asp-action="UserEmail" asp-controller="Auth" asp-route-returnUrl="@ViewData["ReturnUrl"]">Register</a>
     </div>
 </div>

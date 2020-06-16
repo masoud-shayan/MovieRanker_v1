@@ -81,3 +81,10 @@ C:\Users\Alekhandr0\Desktop\dot-net-core\PracticalApps\MovieRanker_v1\MovieRanke
 C:\Users\Alekhandr0\Desktop\dot-net-core\PracticalApps\MovieRanker_v1\MovieRanker_v1\IdentityServer\obj\Release\netcoreapp3.1\Razor\Views\Auth\Logout.cshtml.g.cs
 C:\Users\Alekhandr0\Desktop\dot-net-core\PracticalApps\MovieRanker_v1\MovieRanker_v1\IdentityServer\obj\Release\netcoreapp3.1\Razor\Views\Auth\UserEmail.cshtml.g.cs
 C:\Users\Alekhandr0\Desktop\dot-net-core\PracticalApps\MovieRanker_v1\MovieRanker_v1\IdentityServer\obj\Release\netcoreapp3.1\Razor\Views\Auth\UserPassword.cshtml.g.cs
+C:\Users\Alekhandr0\Desktop\dot-net-core\PracticalApps\MovieRanker_v1\MovieRanker_v1\IdentityServer\bin\Release\netcoreapp3.1\MailKit.dll
+C:\Users\Alekhandr0\Desktop\dot-net-core\PracticalApps\MovieRanker_v1\MovieRanker_v1\IdentityServer\bin\Release\netcoreapp3.1\MimeKit.dll
+C:\Users\Alekhandr0\Desktop\dot-net-core\PracticalApps\MovieRanker_v1\MovieRanker_v1\IdentityServer\bin\Release\netcoreapp3.1\NETCore.MailKit.dll
+C:\Users\Alekhandr0\Desktop\dot-net-core\PracticalApps\MovieRanker_v1\MovieRanker_v1\IdentityServer\bin\Release\netcoreapp3.1\BouncyCastle.Crypto.dll
+C:\Users\Alekhandr0\Desktop\dot-net-core\PracticalApps\MovieRanker_v1\MovieRanker_v1\IdentityServer\obj\Release\netcoreapp3.1\Razor\Views\Auth\SuccessUserEmail.cshtml.g.cs
+C:\Users\Alekhandr0\Desktop\dot-net-core\PracticalApps\MovieRanker_v1\MovieRanker_v1\IdentityServer\obj\Release\netcoreapp3.1\Razor\Views\Auth\Error.cshtml.g.cs
+C:\Users\Alekhandr0\Desktop\dot-net-core\PracticalApps\MovieRanker_v1\MovieRanker_v1\IdentityServer\obj\Release\netcoreapp3.1\Razor\Views\Auth\UserEmailConfirm.cshtml.g.cs

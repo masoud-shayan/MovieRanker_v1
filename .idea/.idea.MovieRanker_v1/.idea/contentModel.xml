@@ -36,6 +36,13 @@
           </e>
         </e>
         <e p="db-script.txt" t="Include" />
+        <e p="EmailService" t="Include">
+          <e p="EmailConfiguration.cs" t="Include" />
+          <e p="EmailSender.cs" t="Include" />
+          <e p="EmailService.csproj" t="Include" />
+          <e p="IEmailSender.cs" t="Include" />
+          <e p="Message.cs" t="Include" />
+        </e>
         <e p="IdentityServer.csproj" t="IncludeRecursive" />
         <e p="Models" t="Include">
           <e p="ErrorViewModel.cs" t="Include" />
@@ -67,10 +74,13 @@
           <e p="_ViewImports.cshtml" t="Include" />
           <e p="_ViewStart.cshtml" t="Include" />
           <e p="Auth" t="Include">
+            <e p="Error.cshtml" t="Include" />
             <e p="Login.cshtml" t="Include" />
             <e p="Logout.cshtml" t="Include" />
             <e p="Register.cshtml" t="Include" />
+            <e p="SuccessUserEmail.cshtml" t="Include" />
             <e p="UserEmail.cshtml" t="Include" />
+            <e p="UserEmailConfirm.cshtml" t="Include" />
             <e p="UserPassword.cshtml" t="Include" />
             <e p="UserPhoto.cshtml" t="Include" />
           </e>
