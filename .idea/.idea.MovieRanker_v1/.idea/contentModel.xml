@@ -313,6 +313,20 @@
           <e p="IdentityController.cs" t="Include" />
           <e p="Movie.cs" t="Include" />
         </e>
+        <e p="Data" t="Include">
+          <e p="ApplicationDbContext.cs" t="Include" />
+        </e>
+        <e p="Entities" t="Include">
+          <e p="Movie.cs" t="Include" />
+          <e p="MovieModel.cs" t="Include" />
+          <e p="MovieUserRanked.cs" t="Include" />
+          <e p="User.cs" t="Include" />
+        </e>
+        <e p="Migrations" t="Include">
+          <e p="20200618190539_InitialCreate.cs" t="Include" />
+          <e p="20200618190539_InitialCreate.Designer.cs" t="Include" />
+          <e p="ApplicationDbContextModelSnapshot.cs" t="Include" />
+        </e>
         <e p="obj" t="ExcludeRecursive">
           <e p="Release" t="Include">
             <e p="netcoreapp3.1" t="Include">
