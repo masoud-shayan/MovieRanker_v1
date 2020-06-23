@@ -21,15 +21,14 @@ namespace WebApi.Entities
         [Required]
         // [Column(TypeName="Date")]
         // [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode=true)]
-        [Range(2021,1800)]
+        // [Range(2021,1800)]
         public int ReleaseDate{ get; set; }
 
         [Required] 
         public string Director{ get; set; }
         
-        [Required]
-        [Range(1, 5 ,ErrorMessage ="Value must be between {1} and {5}.")]
-        public double Rank{ get; set; }
+
+        public double OverallRank{ get; set; }
         
         [Required]
         public int RankCount{ get; set; }

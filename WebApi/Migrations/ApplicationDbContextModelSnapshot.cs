@@ -47,7 +47,7 @@ namespace WebApi.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<double>("Rank")
+                    b.Property<double>("OverallRank")
                         .HasColumnType("double precision");
 
                     b.Property<int>("RankCount")
@@ -73,6 +73,9 @@ namespace WebApi.Migrations
 
                     b.Property<Guid>("MovieId")
                         .HasColumnType("uuid");
+
+                    b.Property<int>("Rank")
+                        .HasColumnType("integer");
 
                     b.HasKey("UserId", "MovieId");
 

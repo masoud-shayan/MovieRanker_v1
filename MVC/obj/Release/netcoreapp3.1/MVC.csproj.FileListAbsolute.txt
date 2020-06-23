@@ -77,3 +77,9 @@ C:\Users\Alekhandr0\Desktop\dot-net-core\PracticalApps\MovieRanker_v1\MovieRanke
 C:\Users\Alekhandr0\Desktop\dot-net-core\PracticalApps\MovieRanker_v1\MovieRanker_v1\MVC\obj\Release\netcoreapp3.1\Razor\Views\User\Ranked_Movies.cshtml.g.cs
 C:\Users\Alekhandr0\Desktop\dot-net-core\PracticalApps\MovieRanker_v1\MovieRanker_v1\MVC\obj\Release\netcoreapp3.1\Razor\Views\Movie\Delete_Movie.cshtml.g.cs
 C:\Users\Alekhandr0\Desktop\dot-net-core\PracticalApps\MovieRanker_v1\MovieRanker_v1\MVC\obj\Release\netcoreapp3.1\Razor\Views\Home\UserIndex.cshtml.g.cs
+C:\Users\Alekhandr0\Desktop\dot-net-core\PracticalApps\MovieRanker_v1\MovieRanker_v1\MVC\bin\Release\netcoreapp3.1\Microsoft.Win32.SystemEvents.dll
+C:\Users\Alekhandr0\Desktop\dot-net-core\PracticalApps\MovieRanker_v1\MovieRanker_v1\MVC\bin\Release\netcoreapp3.1\System.Drawing.Common.dll
+C:\Users\Alekhandr0\Desktop\dot-net-core\PracticalApps\MovieRanker_v1\MovieRanker_v1\MVC\bin\Release\netcoreapp3.1\runtimes\win\lib\netcoreapp3.0\Microsoft.Win32.SystemEvents.dll
+C:\Users\Alekhandr0\Desktop\dot-net-core\PracticalApps\MovieRanker_v1\MovieRanker_v1\MVC\bin\Release\netcoreapp3.1\runtimes\unix\lib\netcoreapp3.0\System.Drawing.Common.dll
+C:\Users\Alekhandr0\Desktop\dot-net-core\PracticalApps\MovieRanker_v1\MovieRanker_v1\MVC\bin\Release\netcoreapp3.1\runtimes\win\lib\netcoreapp3.0\System.Drawing.Common.dll
+C:\Users\Alekhandr0\Desktop\dot-net-core\PracticalApps\MovieRanker_v1\MovieRanker_v1\MVC\obj\Release\netcoreapp3.1\Razor\Views\Movie\Add_New_Movie_Success.cshtml.g.cs

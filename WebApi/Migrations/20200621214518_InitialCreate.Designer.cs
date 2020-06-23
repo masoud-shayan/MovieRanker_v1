@@ -10,7 +10,7 @@ using WebApi.Data;
 namespace WebApi.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20200618190539_InitialCreate")]
+    [Migration("20200621214518_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -49,7 +49,7 @@ namespace WebApi.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<double>("Rank")
+                    b.Property<double>("OverallRank")
                         .HasColumnType("double precision");
 
                     b.Property<int>("RankCount")
@@ -75,6 +75,9 @@ namespace WebApi.Migrations
 
                     b.Property<Guid>("MovieId")
                         .HasColumnType("uuid");
+
+                    b.Property<int>("Rank")
+                        .HasColumnType("integer");
 
                     b.HasKey("UserId", "MovieId");
 

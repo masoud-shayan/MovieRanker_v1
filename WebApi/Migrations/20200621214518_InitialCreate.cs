@@ -29,7 +29,7 @@ namespace WebApi.Migrations
                     Description = table.Column<string>(nullable: false),
                     ReleaseDate = table.Column<int>(nullable: false),
                     Director = table.Column<string>(nullable: false),
-                    Rank = table.Column<double>(nullable: false),
+                    OverallRank = table.Column<double>(nullable: false),
                     RankCount = table.Column<int>(nullable: false),
                     ImagePath = table.Column<string>(nullable: false),
                     CreatedDate = table.Column<DateTime>(nullable: false, defaultValueSql: "CURRENT_DATE"),
@@ -51,7 +51,8 @@ namespace WebApi.Migrations
                 columns: table => new
                 {
                     UserId = table.Column<Guid>(nullable: false),
-                    MovieId = table.Column<Guid>(nullable: false)
+                    MovieId = table.Column<Guid>(nullable: false),
+                    Rank = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {

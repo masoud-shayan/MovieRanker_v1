@@ -1,4 +1,4 @@
-﻿@model MovieModel
+﻿@model MVC.Models.AddMovieViewModel
 
 <h4 class="text-center" style="margin-bottom: 50px;font-size: 30px;font-weight:300;line-height:1.2">Add The Movie Details</h4>
 
@@ -6,7 +6,7 @@
 <div class="container">
     <div class="row">
         <div class="col-md-4">
-            <form asp-controller=Movie asp-action=Add_New_Movie>
+            <form asp-controller="Movie" asp-action="Add_New_Movie" enctype="multipart/form-data">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <div class="form-group">
                     <label asp-for="Name" class="control-label"></label> 
@@ -21,7 +21,7 @@
                 </div>
                 <div class="form-group">
                     <label asp-for="ReleaseDate" class="control-label"></label>
-                    <input type="date" asp-for="ReleaseDate" class="form-control">
+                    <input asp-for="ReleaseDate" class="form-control">
                     <span asp-validation-for="ReleaseDate"></span>
                 </div>
                 <div class="form-group">
@@ -31,17 +31,9 @@
                 </div>
                 <div class="form-group">
                     <label asp-for="Image" class="control-label"></label>
-                    <input asp-for="Image" accept="image/*">
-                    <span asp-validation-for="Image"></span>
+                    <input asp-for="Image" accept="image/*"><br/>
+                    <span asp-validation-for="Image" class="text-danger"></span>
                 </div>
-                <div class="form-group">
-                    <label asp-for="Rank" class="control-label"></label>
-                    <input asp-for="Rank" type="range" name="RankInputId" id="RankInputId" value="5" min="1" max="10" step="1" oninput="RankOutputId.value = RankInputId.value" min="0" max="10" step="1" value="5"  class="form-control-range">
-                    @* <input type="range" name="RankInputId" id="RankInputId" value="5" min="1" max="10" step="1" oninput="RankOutputId.value = RankInputId.value"> *@
-                    <output name="RankOutputId" id="RankOutputId">5</output>
-                    <span asp-validation-for="Rank"></span>
-                </div>
-
                 <div class="form-group">
                     <input type="submit" value="+ Add" class="add-new-button" style="border: none;padding: 5px 10px;border-radius: 5px">
                 </div>

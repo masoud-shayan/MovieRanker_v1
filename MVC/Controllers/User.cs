@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Net.Http;
 using System.Reflection.Metadata.Ecma335;
@@ -61,6 +62,12 @@ namespace MVC.Controllers
             }
 
             var userInfoModel = await SetUserInfo(userInfo);
+            
+            
+            var id_token = await HttpContext.GetTokenAsync("id_token");
+            var _id_token = new JwtSecurityTokenHandler().ReadJwtToken(id_token);
+            
+            Console.WriteLine(_id_token);
 
             return View(userInfoModel);
         }
@@ -81,6 +88,9 @@ namespace MVC.Controllers
             {
                 return Redirect("https://localhost:5005/Auth/UserPassword");
             }
+            
+
+ 
             
             return View(); // redirect to to changes in identity
         }

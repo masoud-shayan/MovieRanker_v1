@@ -28,14 +28,21 @@ namespace WebApi.Data
             
             // ------- Movie , User ======> MovieUserRanked Relations
 
+            
+            // ------- composite primary key
             modelBuilder.Entity<MovieUserRanked>()
-                .HasKey(t => new { t.UserId, t.MovieId });
+                .HasKey(t => new { t.UserId, t.MovieId});
 
             modelBuilder.Entity<MovieUserRanked>()
                 .HasOne(mur => mur.User)
                 .WithMany(u => u.MoviesUsersRanked)
                 .HasForeignKey(mur => mur.UserId);
 
+            modelBuilder.Entity<MovieUserRanked>()
+                .HasOne(mur => mur.Movie)
+                .WithMany(m => m.MoviesUsersRanked)
+                .HasForeignKey(mur => mur.MovieId);
+            
             modelBuilder.Entity<MovieUserRanked>()
                 .HasOne(mur => mur.Movie)
                 .WithMany(m => m.MoviesUsersRanked)

@@ -176,6 +176,7 @@
           <e p="UserPhotoController.cs" t="Include" />
         </e>
         <e p="Models" t="Include">
+          <e p="AddMovieViewModel.cs" t="Include" />
           <e p="ErrorViewModel.cs" t="Include" />
           <e p="MovieModel.cs" t="Include" />
           <e p="UserInfoViewModel.cs" t="Include" />
@@ -211,6 +212,7 @@
           </e>
           <e p="Movie" t="Include">
             <e p="Add_New_Movie.cshtml" t="Include" />
+            <e p="Add_New_Movie_Success.cshtml" t="Include" />
             <e p="Delete_Movie.cshtml" t="Include" />
             <e p="Index.cshtml" t="Include" />
             <e p="Who_Added_It.cshtml" t="Include" />
@@ -311,20 +313,23 @@
         <e p="bin" t="ExcludeRecursive" />
         <e p="Controllers" t="Include">
           <e p="IdentityController.cs" t="Include" />
-          <e p="Movie.cs" t="Include" />
+          <e p="MovieController.cs" t="Include" />
+          <e p="UserController.cs" t="Include" />
         </e>
         <e p="Data" t="Include">
           <e p="ApplicationDbContext.cs" t="Include" />
         </e>
         <e p="Entities" t="Include">
+          <e p="AddMovieViewModel.cs" t="Include" />
+          <e p="AddUserViewModel.cs" t="Include" />
+          <e p="IncomingMovieModel.cs" t="Include" />
           <e p="Movie.cs" t="Include" />
-          <e p="MovieModel.cs" t="Include" />
           <e p="MovieUserRanked.cs" t="Include" />
           <e p="User.cs" t="Include" />
         </e>
         <e p="Migrations" t="Include">
-          <e p="20200618190539_InitialCreate.cs" t="Include" />
-          <e p="20200618190539_InitialCreate.Designer.cs" t="Include" />
+          <e p="20200621214518_InitialCreate.cs" t="Include" />
+          <e p="20200621214518_InitialCreate.Designer.cs" t="Include" />
           <e p="ApplicationDbContextModelSnapshot.cs" t="Include" />
         </e>
         <e p="obj" t="ExcludeRecursive">
@@ -340,6 +345,11 @@
         </e>
         <e p="Startup.cs" t="Include" />
         <e p="WebApi.csproj" t="IncludeRecursive" />
+        <e p="wwwroot" t="Include">
+          <e p="image" t="Include">
+            <e p="avatar.jpg" t="Include" />
+          </e>
+        </e>
       </e>
     </e>
   </component>

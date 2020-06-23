@@ -1,9 +1,13 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace MVC.Models
 {
     public class UserInfoViewModel
     {
+        
+
+        public Guid UserId { get; set; }
         
         [Required]
         [EmailAddress]

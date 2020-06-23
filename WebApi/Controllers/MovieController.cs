@@ -1,28 +1,35 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.IO;
 using System.Linq;
 using System.Runtime.Intrinsics.X86;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Microsoft.EntityFrameworkCore;
+using MVC.Models;
 using WebApi.Data;
 using WebApi.Entities;
 
 namespace WebApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
-    public class Movie : Controller
+    public class MovieController : ControllerBase
     {
         private readonly ApplicationDbContext _applicationDb;
+        private readonly IWebHostEnvironment _hostEnvironment;
 
-        public Movie(ApplicationDbContext applicationDb)
+        public MovieController(ApplicationDbContext applicationDb , IWebHostEnvironment hostEnvironment)
         {
             _applicationDb = applicationDb;
+            _hostEnvironment = hostEnvironment;
         }
+        
+        
 
         [HttpGet]
         [Authorize]
@@ -36,7 +43,7 @@ namespace WebApi.Controllers
 
         [HttpGet("{movieId}")]
         [Authorize]
-        public async Task<ActionResult<Entities.Movie>> GetMovie(Guid movieId)
+        public async Task<ActionResult<Movie>> GetMovie(Guid movieId)
         {
             var movie = await _applicationDb.Movies.FindAsync(movieId);
 
@@ -47,6 +54,8 @@ namespace WebApi.Controllers
 
             return movie;
         }
+        
+        
 
         [HttpGet]
         [Authorize]
@@ -58,26 +67,59 @@ namespace WebApi.Controllers
 
             return lastRecent;
         }
+        
 
         [HttpPost]
         [Authorize]
-        public async Task<IActionResult> AddMovie(WebApi.Entities.MovieModel movieModel)
+        public async Task<IActionResult> AddMovie([FromForm] AddMovieViewModel movieModel )
         {
-            Entities.Movie movie = new Entities.Movie()
+            
+            
+
+
+            
+            // ------- save ImageFile to directory
+            var rootPath = _hostEnvironment.WebRootPath;
+            var fileName = Path.GetFileNameWithoutExtension(movieModel.ImageFile.FileName);
+            var extension = Path.GetExtension(movieModel.ImageFile.FileName);
+            var userPhotoName = fileName + DateTime.Now.ToString("yymmddssfff") + extension;
+            string path = Path.Combine(rootPath, "image", userPhotoName);
+            
+            using (var fileStream = new FileStream(path, FileMode.Create))
+            {
+                await movieModel.ImageFile.CopyToAsync(fileStream);
+            }
+
+            
+            Console.WriteLine("userId   " + movieModel.UserId);
+
+
+            
+
+            // ------- create new movie with current movie data that coming from request body
+
+
+            Movie movie = new Movie
             {
                 Name = movieModel.Name,
                 Description = movieModel.Description,
-                ReleaseDate = movieModel.ReleaseDate,
+                ReleaseDate =  Int32.Parse(movieModel.ReleaseDate),
                 Director = movieModel.Director,
-                Rank = movieModel.Rank,
-                ImagePath = movieModel.ImagePath,
-                RankCount = 1
+                UserId = new Guid(movieModel.UserId),
+                ImagePath = path ,
+                RankCount = 0,
             };
 
+            
             await _applicationDb.Movies.AddAsync(movie);
+            // await _applicationDb.Movies.AddAsync(movie);
             await _applicationDb.SaveChangesAsync();
+            
+            Console.WriteLine(2);
+            
+            return CreatedAtAction(nameof(GetMovie), new {movieId = movie.Id}, movie);
 
-            return CreatedAtAction(nameof(GetMovie), new {id = movie.Id}, movie);
+
         }
 
 
@@ -98,10 +140,10 @@ namespace WebApi.Controllers
             }
 
             var newCount = movie.RankCount + 1;
-            var newRank = movie.Rank + Math.Abs(rank - movie.Rank) / newCount;
+            var newRank = movie.OverallRank + Math.Abs(rank - movie.OverallRank) / newCount;
 
             movie.RankCount = newCount;
-            movie.Rank = newRank;
+            movie.OverallRank = newRank;
 
             _applicationDb.Entry(movie).State = EntityState.Modified;
 
@@ -164,12 +206,14 @@ namespace WebApi.Controllers
                 return NotFound();
             }
             
-            var extractedUser = await _applicationDb.Users.Include(u => u.Movies).FirstOrDefaultAsync(u => u.Id == userId);
+            
+            // var extractedUser = await _applicationDb.Users.Include(u => u.Movies).FirstOrDefaultAsync(u => u.Id == userId);
+            // ActionResult<IList<Entities.Movie>> movies = extractedUser.Movies.ToList();
 
 
-            ActionResult<IList<Entities.Movie>> movies = extractedUser.Movies.ToList();
-
-
+            var movies = user.Movies.ToList();
+            
+            
             return movies;
         }
         
@@ -185,12 +229,45 @@ namespace WebApi.Controllers
                 return NotFound();
             }
 
-            ActionResult<IList<Entities.Movie>> movies = await _applicationDb.Users
-                .Include(item => item.MoviesUsersRanked)
-                .ThenInclude(item => item.Movie).Where(u => u.Id == userId);
+
+            var x =  _applicationDb.Users
+                .Where(u => u.Id == userId)
+                .Include(u => u.MoviesUsersRanked)
+                .ThenInclude(mur => mur.Movie);
 
 
+            foreach (var u in x)
+            {
+                
+            }
+
+            var movies = user.Movies.ToList();
+            
             return movies;
+        }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<ActionResult<Guid>> GetUserId(AddUserViewModel incomingUser)
+        {
+            var user = await _applicationDb.Users.FindAsync(new Guid(incomingUser.UserId));
+        
+            if (user == null)
+            {
+        
+                user = new User()
+                {
+                    Id = new Guid(incomingUser.UserId),
+                    UserName = incomingUser.UserName,
+                    UserImage = incomingUser.UserImagePath
+                };
+                
+                await _applicationDb.Users.AddAsync(user);
+                await _applicationDb.SaveChangesAsync();
+
+            }
+        
+            return user.Id;
         }
     }
 }
