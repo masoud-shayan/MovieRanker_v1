@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Net.Http;
-using System.Reflection.Metadata.Ecma335;
 using System.Threading.Tasks;
 using IdentityModel.Client;
 using Microsoft.AspNetCore.Authentication;
@@ -15,12 +14,12 @@ using Newtonsoft.Json;
 
 namespace MVC.Controllers
 {
-    public class User : Controller
+    public class UserController : Controller
     {
         private readonly IWebHostEnvironment _hostEnvironment;
         private readonly IHttpClientFactory _httpClientFactory;
 
-        public User(IWebHostEnvironment hostEnvironment, IHttpClientFactory httpClientFactory)
+        public UserController(IWebHostEnvironment hostEnvironment, IHttpClientFactory httpClientFactory)
         {
             _hostEnvironment = hostEnvironment;
             _httpClientFactory = httpClientFactory;
@@ -64,10 +63,10 @@ namespace MVC.Controllers
             var userInfoModel = await SetUserInfo(userInfo);
             
             
-            var id_token = await HttpContext.GetTokenAsync("id_token");
-            var _id_token = new JwtSecurityTokenHandler().ReadJwtToken(id_token);
-            
-            Console.WriteLine(_id_token);
+            // var id_token = await HttpContext.GetTokenAsync("id_token");
+            // var _id_token = new JwtSecurityTokenHandler().ReadJwtToken(id_token);
+            //
+            // Console.WriteLine(_id_token);
 
             return View(userInfoModel);
         }

@@ -1,16 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Linq;
 using System.Runtime.Intrinsics.X86;
 using System.Threading.Tasks;
+using IdentityServer4.Models;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using MVC.Models;
+using Newtonsoft.Json;
 using WebApi.Data;
 using WebApi.Entities;
 
@@ -32,27 +37,58 @@ namespace WebApi.Controllers
         
 
         [HttpGet]
-        [Authorize]
-        public async Task<ActionResult<IList<Entities.Movie>>> GetMovies()
+        // [Authorize]
+        public async Task<ActionResult<IList<Movie>>> GetMovies()
         {
-            List<Entities.Movie> allMovies = await _applicationDb.Movies
+            List<Movie> allMovies = await _applicationDb.Movies
                 .OrderBy(m => m.CreatedDate).ToListAsync();
 
             return allMovies;
         }
 
-        [HttpGet("{movieId}")]
-        [Authorize]
-        public async Task<ActionResult<Movie>> GetMovie(Guid movieId)
+        [HttpGet("{movieName}")]
+        // [Authorize]
+        public async Task<ActionResult<RetrieveMovieViewModel>> GetMovie(string movieName)
         {
-            var movie = await _applicationDb.Movies.FindAsync(movieId);
+            
+            // -------- take access token from current user context
+            var access_token = await HttpContext.GetTokenAsync("access_token");
+
+            if (string.IsNullOrEmpty(access_token))
+            {
+                return Unauthorized();
+            }
+            
+            // ------- Extract userId (sub) from access token
+            string accessTokenString = new JwtSecurityTokenHandler().ReadJwtToken(access_token).ToString();
+            string toBeSearched = "\"sub\":\"";
+            var userId  = accessTokenString.Substring(accessTokenString.IndexOf(toBeSearched) + toBeSearched.Length );
+            userId = userId.Substring(0, userId.IndexOf("\""));
+
+
+
+            Movie movie =  await _applicationDb.Movies.SingleOrDefaultAsync(m => m.Name == movieName);
 
             if (movie == null)
             {
                 return NotFound();
             }
 
-            return movie;
+            // ------- assign movie properties value to RetrieveMovieViewModel properties value
+            var retrieveMovie = new RetrieveMovieViewModel(movie);
+            
+
+            var movieUserRanked = await _applicationDb.MovieUserRankeds
+                .SingleOrDefaultAsync(m => m.UserId == new Guid(userId) && m.MovieId == movie.Id);
+
+            
+            if (movieUserRanked !=  null)
+            {
+                retrieveMovie.UserRank = movieUserRanked.Rank;
+            }
+            
+            return retrieveMovie;
+
         }
         
         
@@ -89,16 +125,9 @@ namespace WebApi.Controllers
             {
                 await movieModel.ImageFile.CopyToAsync(fileStream);
             }
-
-            
-            Console.WriteLine("userId   " + movieModel.UserId);
-
-
             
 
             // ------- create new movie with current movie data that coming from request body
-
-
             Movie movie = new Movie
             {
                 Name = movieModel.Name,
@@ -115,7 +144,6 @@ namespace WebApi.Controllers
             // await _applicationDb.Movies.AddAsync(movie);
             await _applicationDb.SaveChangesAsync();
             
-            Console.WriteLine(2);
             
             return CreatedAtAction(nameof(GetMovie), new {movieId = movie.Id}, movie);
 

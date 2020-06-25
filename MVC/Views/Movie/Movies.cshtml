@@ -1,31 +1,11 @@
-﻿@* @using Microsoft.AspNetCore.Identity *@
-@* @using MVC.Controllers *@
-@model IList<GetMoviesViewModel> 
+﻿@model IList<GetMoviesViewModel> 
 
 
-@{
-    // ViewData["Title"] = "Home Page";
-}
-
-<h1></h1>
-@* <h2>@ViewData["Signed"]</h2> *@
 <div class="container">
-    <div class="row">
-        <div class="col-md-4 d-flex flex-column align-items-baseline">
-            <a style="margin-bottom: 25px; margin-top: 86px" class="add-new-button"  asp-controller=Movie asp-action=Add_New_Movie>+ Add New Movie</a>
-@*             @if (User.Identity.IsAuthenticated) *@
-@*             { *@
-@*                 <a class="add-new-button"  asp-controller=User asp-action=Index>Your Account</a> *@
-@*             } *@
-            @* else *@
-            @* { *@
-                <a style="margin-bottom: 5px" class="add-new-button"  asp-controller=User asp-action=SignIn>&#8594; Sign In</a>
-                <a class="add-new-button"  asp-controller=User asp-action=SignUp>&#8593; Sign Up</a>
-            @* } *@
-
-        </div>
+    <div class="row d-flex flex-column align-items-center justify-content-center">
         <div class="col-md-8">
             <h4 class="text-center" style="margin-bottom: 50px;font-size: 30px;font-weight:300;line-height:1.2">List of all recent movie</h4>
+            
             
                             @foreach (GetMoviesViewModel movie in @Model)
                             {
@@ -45,7 +25,7 @@
                             
                                 </a>
                             }
-
+  
 
         </div>
     </div>

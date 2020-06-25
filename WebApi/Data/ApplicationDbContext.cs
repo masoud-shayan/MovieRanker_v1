@@ -8,6 +8,7 @@ namespace WebApi.Data
         
         public DbSet<User> Users { get; set; }
         public DbSet<Movie> Movies { get; set; }
+        public DbSet<MovieUserRanked> MovieUserRankeds { get; set; }
         
         public ApplicationDbContext(DbContextOptions options) : base(options)
         {
