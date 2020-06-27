@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using IdentityModel.Client;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MVC.Models;
 using Newtonsoft.Json;
@@ -35,14 +36,15 @@ namespace MVC.Controllers
         {
             // ------- call the movie Api to get all the movies
             var access_token = await HttpContext.GetTokenAsync("access_token");
-            
+
             var allMoviesRequest = _httpClientFactory.CreateClient();
             allMoviesRequest.SetBearerToken(access_token);
             var allMoviesResponse = await allMoviesRequest.GetAsync("https://localhost:5001/api/Movie/GetMovies");
             allMoviesResponse.EnsureSuccessStatusCode();
-            
+
             var allMoviesResponseContent = await allMoviesResponse.Content.ReadAsStringAsync();
-            IList<GetMoviesViewModel> movies = JsonConvert.DeserializeObject<IList<GetMoviesViewModel>>(allMoviesResponseContent);
+            IList<GetMoviesViewModel> movies =
+                JsonConvert.DeserializeObject<IList<GetMoviesViewModel>>(allMoviesResponseContent);
 
             // ------ fix the movie's image path
             string toBeSearched = "wwwroot";
@@ -51,15 +53,16 @@ namespace MVC.Controllers
                 var imagePathTemp = movie.ImagePath;
                 imagePathTemp = imagePathTemp.Substring(imagePathTemp.IndexOf(toBeSearched) + toBeSearched.Length);
                 // imagePathTemp = Path.Combine("https://localhost:5001",imagePathTemp);
-                imagePathTemp = "https://localhost:5001/"+imagePathTemp.Replace(@"\",@"/");
+                imagePathTemp = "https://localhost:5001/" + imagePathTemp.Replace(@"\", @"/");
                 movie.ImagePath = imagePathTemp;
             }
-            
-            
-            return View("Movies" ,movies );
+
+
+            return View("Movies", movies);
         }
 
         [Route("[controller]/{movieName}")]
+        [Authorize]
         [HttpGet]
         public async Task<ActionResult<RetrieveMovieViewModel>> Index(string movieName)
         {
@@ -67,18 +70,19 @@ namespace MVC.Controllers
             ViewData["access_token"] = access_token; // for delete button
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier); // will give the user's userId
 
-            
+
             // ------- call the movie Api to get 1 movie
             var allMoviesRequest = _httpClientFactory.CreateClient();
             allMoviesRequest.SetBearerToken(access_token);
-            var allMoviesResponse = await allMoviesRequest.GetAsync($"https://localhost:5001/api/Movie/GetMovie/{movieName}");
+            var allMoviesResponse =
+                await allMoviesRequest.GetAsync($"https://localhost:5001/api/Movie/GetMovie/{movieName}");
             allMoviesResponse.EnsureSuccessStatusCode();
-            
-            var allMoviesResponseContent = await allMoviesResponse.Content.ReadAsStringAsync();
-            RetrieveMovieViewModel retrieveMovie = JsonConvert.DeserializeObject<RetrieveMovieViewModel>(allMoviesResponseContent);
-            
 
-            
+            var allMoviesResponseContent = await allMoviesResponse.Content.ReadAsStringAsync();
+            RetrieveMovieViewModel retrieveMovie =
+                JsonConvert.DeserializeObject<RetrieveMovieViewModel>(allMoviesResponseContent);
+
+
             // ------ fix the movie's image path
             if (!string.IsNullOrEmpty(retrieveMovie.ImagePath))
             {
@@ -86,26 +90,90 @@ namespace MVC.Controllers
                 var imagePathTemp = retrieveMovie.ImagePath;
                 imagePathTemp = imagePathTemp.Substring(imagePathTemp.IndexOf(toBeSearched) + toBeSearched.Length);
                 // imagePathTemp = Path.Combine("https://localhost:5001",imagePathTemp);
-                imagePathTemp = "https://localhost:5001/"+imagePathTemp.Replace(@"\",@"/");
+                imagePathTemp = "https://localhost:5001/" + imagePathTemp.Replace(@"\", @"/");
                 retrieveMovie.ImagePath = imagePathTemp;
             }
 
-            return View("movie" , retrieveMovie);
+            return View("movie", retrieveMovie);
         }
 
-        [Route("[controller]/{id:int}/[action]")]
+        // [Route("[controller]/{id:int}/[action]")]
         [HttpGet]
-        public async Task<IActionResult> Who_Added_It(int id)
+        public async Task<IActionResult> Who_Added_It(string movieName)
         {
-            ViewData["data"] = id;
-            return View();
+            var accessToken = await HttpContext.GetTokenAsync("access_token");
+
+
+            var movieClient = _httpClientFactory.CreateClient();
+            movieClient.SetBearerToken(accessToken);
+
+            var httpResponse = await movieClient.GetAsync($"https://localhost:5001/api/Movie/MovieAddedBy/{movieName}");
+            httpResponse.EnsureSuccessStatusCode();
+
+            var user = await httpResponse.Content.ReadAsStringAsync();
+            
+
+
+
+            var userInfoDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(user);
+            userInfoDictionary.TryGetValue("id", out string userId);
+            userInfoDictionary.TryGetValue("userName", out string userName);
+            userInfoDictionary.TryGetValue("userImage", out string userImage);
+
+
+            var userInfo = new UserInfoViewModel
+            {
+                UserId = new Guid(userId),
+                UserName = userName,
+                Email = userName,
+                UserImagePath = userImage
+            };
+
+
+            return View(userInfo);
         }
 
-        [Route("[controller]/{id:int}/[action]")]
+        // [Route("[controller]/{id:int}/[action]")]
         [HttpGet]
-        public async Task<IActionResult> Who_Ranked_It(int id)
+        public async Task<IActionResult> Who_Ranked_It(string movieName)
         {
-            return View();
+            var accessToken = await HttpContext.GetTokenAsync("access_token");
+
+
+            var movieClient = _httpClientFactory.CreateClient();
+            movieClient.SetBearerToken(accessToken);
+
+            var httpResponse = await movieClient.GetAsync($"https://localhost:5001/api/Movie/MovieRankedBy/{movieName}");
+            httpResponse.EnsureSuccessStatusCode();
+
+            var users = await httpResponse.Content.ReadAsStringAsync();
+            
+
+
+
+            var usersInfoDictionary = JsonConvert.DeserializeObject<IList<Dictionary<string, string>>>(users);
+
+            
+            IList<UserInfoViewModel> usersList = new List<UserInfoViewModel>();
+
+            foreach (var userDic in usersInfoDictionary)
+            {
+                usersList.Add(new UserInfoViewModel
+                {
+                    UserId = new Guid(userDic["id"]),
+                    UserName = userDic["userName"],
+                    Email = userDic["userName"],
+                    UserImagePath = userDic["userImage"]
+                });
+            }
+
+            foreach (var x in usersList)
+            {
+                Console.WriteLine("username  :  " + x.UserName);
+            }
+
+
+            return View(usersList);
         }
 
         [HttpGet]
@@ -167,10 +235,9 @@ namespace MVC.Controllers
             var userInfoModelContent = new StringContent(JsonConvert.SerializeObject(userInfoModel), Encoding.UTF8,
                 MediaTypeNames.Application.Json);
             var httpResponse =
-                await apiClient.PostAsync("https://localhost:5001/api/Movie/GetUserId", userInfoModelContent);
+                await apiClient.PostAsync("https://localhost:5001/api/Movie/UpdateUser", userInfoModelContent);
 
             httpResponse.EnsureSuccessStatusCode();
-
 
 
             // ------- call the Api to add new movie with this current User
@@ -224,21 +291,21 @@ namespace MVC.Controllers
         [HttpPost]
         [Authorize]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult>  Delete_Movie(string movieName)
+        public async Task<IActionResult> Delete_Movie(string movieName)
         {
-            
             var accessToken = await HttpContext.GetTokenAsync("access_token");
 
 
             var movieClient = _httpClientFactory.CreateClient();
             movieClient.SetBearerToken(accessToken);
-            
+
             // ------- 1. with anonymous  type (class)
             // var movieRankContent = new StringContent(JsonConvert.SerializeObject(new {MovieName = movieName}), Encoding.UTF8, MediaTypeNames.Application.Json);
-            
+
             // ....... 2. with a named type (class)
             // var movieRankContent = new StringContent(movieName, Encoding.UTF8, MediaTypeNames.Application.Json);
-            var httpResponse = await movieClient.DeleteAsync($"https://localhost:5001/api/Movie/DeleteMovie/{movieName}");
+            var httpResponse =
+                await movieClient.DeleteAsync($"https://localhost:5001/api/Movie/DeleteMovie/{movieName}");
 
             httpResponse.EnsureSuccessStatusCode();
             return View();
@@ -251,28 +318,29 @@ namespace MVC.Controllers
         {
             return View();
         }
-        
+
 
         [HttpPost]
         [Authorize]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Rank_Movie(int RankInputId , string movieName )
+        public async Task<IActionResult> Rank_Movie(int RankInputId, string movieName)
         {
-
-
-
             var accessToken = await HttpContext.GetTokenAsync("access_token");
 
 
             var movieClient = _httpClientFactory.CreateClient();
             movieClient.SetBearerToken(accessToken);
-            
+
             // ------- 1. with anonymous  type (class)
             // var movieRankContent = new StringContent(JsonConvert.SerializeObject(new {MovieName = movieName , MovieRank = RankInputId }), Encoding.UTF8, MediaTypeNames.Application.Json);
-            
+
             // ....... 2. with a named type (class)
-            var movieRankContent = new StringContent(JsonConvert.SerializeObject(new MovieRankModel{MovieName = movieName , MovieRank = RankInputId }), Encoding.UTF8, MediaTypeNames.Application.Json);
-            var httpResponse = await movieClient.PostAsync("https://localhost:5001/api/Movie/RankMovie", movieRankContent);
+            var movieRankContent =
+                new StringContent(
+                    JsonConvert.SerializeObject(new MovieRankModel {MovieName = movieName, MovieRank = RankInputId}),
+                    Encoding.UTF8, MediaTypeNames.Application.Json);
+            var httpResponse =
+                await movieClient.PostAsync("https://localhost:5001/api/Movie/RankMovie", movieRankContent);
 
             httpResponse.EnsureSuccessStatusCode();
             return View();
@@ -365,7 +433,6 @@ namespace MVC.Controllers
         [Authorize]
         public IActionResult Add_New_Movie_Success()
         {
-            
             // var accessToken = HttpContext.GetTokenAsync("access_token").Result;
             // return Ok(new
             // {
@@ -373,6 +440,23 @@ namespace MVC.Controllers
             // });
 
             return View();
+        }
+
+        private string ImageUrlNormalizer(string host, string imageUrl)
+        {
+
+            if (imageUrl.Equals("/image/avatar.jpg"))
+            {
+                return Path.Combine("https://localhost:5003", "wwwroot", imageUrl);
+            }
+            string toBeSearched = "wwwroot";
+
+            var imagePath = imageUrl;
+            imagePath = imagePath.Substring(imagePath.IndexOf(toBeSearched) + toBeSearched.Length);
+            // imagePathTemp = Path.Combine("https://localhost:5001",imagePathTemp);
+            imagePath = "host" + imagePath.Replace(@"\", @"/");
+
+            return imagePath;
         }
     }
 }

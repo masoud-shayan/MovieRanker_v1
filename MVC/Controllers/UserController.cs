@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Net.Http;
+using System.Net.Mime;
+using System.Text;
 using System.Threading.Tasks;
 using IdentityModel.Client;
 using Microsoft.AspNetCore.Authentication;
@@ -62,11 +64,23 @@ namespace MVC.Controllers
 
             var userInfoModel = await SetUserInfo(userInfo);
             
+            Console.WriteLine("username    :  "+userInfoModel.UserName);
+
             
-            // var id_token = await HttpContext.GetTokenAsync("id_token");
-            // var _id_token = new JwtSecurityTokenHandler().ReadJwtToken(id_token);
-            //
-            // Console.WriteLine(_id_token);
+            
+            
+            // ------- call the movie Api to sync user details with identityserver's user details
+            var access_token = await HttpContext.GetTokenAsync("access_token");
+
+            var apiClient = _httpClientFactory.CreateClient();
+            apiClient.SetBearerToken(access_token);
+            var userInfoModelContent = new StringContent(JsonConvert.SerializeObject(userInfoModel), Encoding.UTF8,
+                MediaTypeNames.Application.Json);
+            var httpResponse =
+                await apiClient.PostAsync("https://localhost:5001/api/Movie/UpdateUser", userInfoModelContent);
+
+            httpResponse.EnsureSuccessStatusCode();
+            
 
             return View(userInfoModel);
         }
@@ -173,6 +187,9 @@ namespace MVC.Controllers
             var userInfoDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(userInfo);
             userInfoDictionary.TryGetValue("email", out string email);
             userInfoDictionary.TryGetValue("UserImagePath", out string UserImagePath);
+            userInfoDictionary.TryGetValue("sub", out string userId);
+            
+
 
             var userImagePathNormalizer = "";
 
@@ -201,12 +218,16 @@ namespace MVC.Controllers
 
             }
 
-            var UserInfoModel = new UserInfoViewModel();
+            var UserInfoModel = new UserInfoViewModel
+            {
+                Email = email,
+                UserName = email.Substring(0, email.IndexOf("@")),
+                UserImagePath = userImagePathNormalizer,
+                UserId = new Guid(userId)
+            };
 
 
-            UserInfoModel.Email = email;
-            UserInfoModel.UserName = email.Substring(0, email.IndexOf("@"));
-            UserInfoModel.UserImagePath = userImagePathNormalizer;
+
             
 
 

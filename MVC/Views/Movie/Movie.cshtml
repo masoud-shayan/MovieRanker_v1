@@ -3,6 +3,15 @@
 @model RetrieveMovieViewModel
 
 
+@{
+    var access_token = ViewData["access_token"].ToString();
+    // ------- Extract userId (sub) from access token
+    string accessTokenString = new JwtSecurityTokenHandler().ReadJwtToken(access_token).ToString();
+    string toBeSearched = "\"sub\":\"";
+    var userId = accessTokenString.Substring(accessTokenString.IndexOf(toBeSearched) + toBeSearched.Length);
+    userId = userId.Substring(0, userId.IndexOf("\""));
+}
+
 <div class="container">
     <div class="row movie-container d-flex justify-content-start " style="margin-bottom: 85px;background-color: #333;color: #fafafa">
         <div class="col-md-3" style="padding: 0;margin-right: 40px">
@@ -38,33 +47,35 @@
 
     <div class="row d-flex justify-content-center" style="margin-bottom: 40px">
         <div class="col-md-4 d-flex justify-content-center">
-            <a href="Movie/12/Who_Added_It" class="add-new-button">who added it ? &#8594; / you Added this movie </a>
+            @if (new Guid(userId) == Model.UserId)
+            {
+                <a href="?" class="add-new-button">you added this movie </a>
+            }
+            else
+            {
+                <a asp-controller="Movie" asp-action="Who_Added_It" asp-route-movieName="@Model.Name" class="add-new-button">who added it ? &#8594;</a>
+            }
         </div>
         <div class="col-md-4 d-flex justify-content-center">
-            <a href="Movie/12/Who_Ranked_It" class="add-new-button">who has been ranked? &#8594;</a>
+            <a asp-controller="Movie" asp-action="Who_Ranked_It" asp-route-movieName="@Model.Name" class="add-new-button">who has been ranked? &#8594;</a>
+
         </div>
     </div>
-    @{
-        var access_token = ViewData["access_token"].ToString();
-        // ------- Extract userId (sub) from access token
-        string accessTokenString = new JwtSecurityTokenHandler().ReadJwtToken(access_token).ToString();
-        string toBeSearched = "\"sub\":\"";
-        var userId = accessTokenString.Substring(accessTokenString.IndexOf(toBeSearched) + toBeSearched.Length);
-        userId = userId.Substring(0, userId.IndexOf("\""));
 
-        if (new Guid(userId) == Model.UserId)
-        {
-            <div class="row d-flex justify-content-center">
-                <form asp-controller=Movie asp-action=Delete_Movie>
-                    <div class="form-group" style="text-align: center;display: inline-block; margin-left: 2rem;">
-                        <input type="hidden" name="movieName" value="@Model.Name" >
-                    </div>
-                    <div class="form-group" style="text-align: center;display: inline-block; margin-left: 2rem;">
-                        <input type="submit" value="Delete!" class="add-new-button" style="border: none;padding: 5px 10px;border-radius: 5px; background-color: red; font-weight: 500;font-family: monospace;">
-                    </div>
-                </form>
-            </div>
-        }
 
+    @if (new Guid(userId) == Model.UserId)
+    {
+        <div class="row d-flex justify-content-center">
+            <form asp-controller=Movie asp-action=Delete_Movie>
+                <div class="form-group" style="text-align: center;display: inline-block; margin-left: 2rem;">
+                    <input type="hidden" name="movieName" value="@Model.Name">
+                </div>
+                <div class="form-group" style="text-align: center;display: inline-block; margin-left: 2rem;">
+                    <input type="submit" value="Delete!" class="add-new-button" style="border: none;padding: 5px 10px;border-radius: 5px; background-color: red; font-weight: 500;font-family: monospace;">
+                </div>
+            </form>
+        </div>
     }
+
+
 </div>

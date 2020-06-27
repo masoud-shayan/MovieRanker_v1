@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IdentityModel.Tokens.Jwt;
@@ -6,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Intrinsics.X86;
 using System.Threading.Tasks;
+using IdentityServer4.Extensions;
 using IdentityServer4.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -33,8 +35,8 @@ namespace WebApi.Controllers
             _applicationDb = applicationDb;
             _hostEnvironment = hostEnvironment;
         }
-
-
+        
+        
         [HttpGet]
         // [Authorize]
         public async Task<ActionResult<IList<Movie>>> GetMovies()
@@ -241,7 +243,7 @@ namespace WebApi.Controllers
                 {
                     _applicationDb.MovieUserRankeds.RemoveRange(rankRecords);
                 }
-                
+
                 await _applicationDb.SaveChangesAsync();
             }
             else
@@ -253,38 +255,99 @@ namespace WebApi.Controllers
             return NoContent();
         }
 
-        [HttpGet("{movieId}")]
+        [HttpGet("{movieName}")]
         [Authorize]
-        public async Task<ActionResult<Entities.User>> MovieAddedBy(Guid movieId)
+        public async Task<ActionResult<User>> MovieAddedBy(string movieName)
         {
-            var movie = await _applicationDb.Movies.FindAsync(movieId);
+            // ------- take access token from httpcontext
+            var userId = await TakeUserIdByAccessToken();
 
+            if (userId.Equals("Unauthorized"))
+            {
+                return Unauthorized();
+            }
+
+            // ------- search to get the movie with provided movie's name
+            var movie = await _applicationDb.Movies.SingleOrDefaultAsync(m => m.Name == movieName);
             if (movie == null)
             {
                 return NotFound();
             }
 
-            return movie.User;
+            if (movie.UserId == new Guid(userId))
+            {
+                return BadRequest();
+            }
+
+            Movie currentMovie = await _applicationDb.Movies
+                .Include(m => m.User)
+                .SingleOrDefaultAsync(m => m.Id == movie.Id);
+
+
+            var user = new User()
+            {
+                Id = currentMovie.User.Id,
+                UserName = currentMovie.User.UserName,
+                UserImage = currentMovie.User.UserImage
+            };
+            
+            Console.WriteLine(user.Id  + "  " +  user.UserName  + "  " +  user.UserImage);
+
+
+            return user;
         }
 
 
-        [HttpGet("{movieId}")]
+        [HttpGet("{movieName}")]
         [Authorize]
-        public async Task<ActionResult<IList<Entities.User>>> MovieRankedBy(Guid movieId)
+        public async Task<ActionResult<IList<Entities.User>>> MovieRankedBy(string movieName)
         {
-            var movie = await _applicationDb.Movies.FindAsync(movieId);
-
+            
+            // ------- search to get the movie with provided movie's name
+            var movie = await _applicationDb.Movies.SingleOrDefaultAsync(m => m.Name == movieName);
             if (movie == null)
             {
                 return NotFound();
             }
+;
+            var usersList = new List<User>();
 
-            ActionResult<IList<Entities.User>> users = await _applicationDb.Movies
-                .Include(item => item.MoviesUsersRanked)
-                .ThenInclude(item => item.User).Where(m => m.Id == movieId).Select(m => m.User).ToListAsync();
+            var usersAndMovieRanks = await _applicationDb.MovieUserRankeds
+                .Include(mur => mur.User)
+                .Where(mur => mur.MovieId == movie.Id).ToListAsync();
 
+            if (usersAndMovieRanks.IsNullOrEmpty())
+            {
+                
+                usersList.Add(new User
+                {
+                    Id = movie.Id,    // does not mean anything !!! , just a workaround to avoid getting error :) !
+                    UserName = "nothing",
+                    UserImage = "nothing"
+                });
+            }
+            else
+            {
 
-            return users;
+                foreach (var item in usersAndMovieRanks)
+                {
+                    usersList.Add(new User
+                    {
+                        Id = item.User.Id,
+                        UserName = item.User.UserName,
+                        UserImage = item.User.UserImage
+                    });
+                }
+            }
+            
+
+            
+            foreach (var x in usersList)
+            {
+                Console.WriteLine("username  :  " + x.UserName);
+            }
+            
+            return usersList;
         }
 
         [HttpGet("{userId}")]
@@ -339,9 +402,11 @@ namespace WebApi.Controllers
 
         [HttpPost]
         [Authorize]
-        public async Task<ActionResult<Guid>> GetUserId(AddUserViewModel incomingUser)
+        public async Task<ActionResult<Guid>> UpdateUser(AddUserViewModel incomingUser)
         {
             var user = await _applicationDb.Users.FindAsync(new Guid(incomingUser.UserId));
+
+            Console.WriteLine("id    :  "+user.Id);
 
             if (user == null)
             {
@@ -353,8 +418,17 @@ namespace WebApi.Controllers
                 };
 
                 await _applicationDb.Users.AddAsync(user);
-                await _applicationDb.SaveChangesAsync();
             }
+            else
+            {
+                user.UserName = incomingUser.UserName;
+                user.UserImage = incomingUser.UserImagePath;
+                
+                 _applicationDb.Users.Update(user);
+            }
+            
+            await _applicationDb.SaveChangesAsync();
+
 
             return user.Id;
         }

@@ -104,7 +104,10 @@
             <e p="site.css" t="Include" />
           </e>
           <e p="favicon.ico" t="Include" />
-          <e p="image" t="Include" />
+          <e p="image" t="Include">
+            <e p="photo_221120112859273.jpg" t="Include" />
+            <e p="tn_1582318861_194820232855211.jpg" t="Include" />
+          </e>
           <e p="js" t="Include">
             <e p="site.js" t="Include" />
           </e>
@@ -360,19 +363,23 @@
         <e p="WebApi.csproj" t="IncludeRecursive" />
         <e p="wwwroot" t="Include">
           <e p="image" t="Include">
+            <e p="1053500x281_144288588479030720352720564.jpg" t="Include" />
             <e p="1download20152403372.jpg" t="Include" />
             <e p="2download20172419648.jpg" t="Include" />
             <e p="3download20222423417.jpg" t="Include" />
             <e p="6fa84690e3cdcd73c2ee89683825ef0d20502625497.jpg" t="Include" />
             <e p="avatar.jpg" t="Include" />
+            <e p="dossswnload20232710984.jpg" t="Include" />
             <e p="dossswnload20572645444.jpg" t="Include" />
             <e p="ford-v-ferrari-1200-120542656916.jpg" t="Include" />
             <e p="interstellar20202405556.jpg" t="Include" />
             <e p="KPlXyDvYhB20312650651.jpg" t="Include" />
+            <e p="martian20332743527.jpg" t="Include" />
             <e p="maxresdefault20132658359.jpg" t="Include" />
             <e p="qaadownload20422639900.jpg" t="Include" />
             <e p="qqdownload20592646756.jpg" t="Include" />
             <e p="share20052602303.jpg" t="Include" />
+            <e p="share20252726882.jpg" t="Include" />
             <e p="WIND-RIVER20072639361.jpeg" t="Include" />
           </e>
         </e>
