@@ -54,7 +54,7 @@ namespace WebApi.Data
             // ------- Auto Generate Date for CreatedDate
             modelBuilder.Entity<Movie>()
                 .Property(m => m.CreatedDate )
-                .HasDefaultValueSql("CURRENT_DATE"); // just for postgres
+                .HasDefaultValueSql("CURRENT_TIMESTAMP"); // just for postgres
             
             
         }

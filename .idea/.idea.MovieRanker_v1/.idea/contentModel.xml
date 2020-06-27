@@ -180,6 +180,7 @@
           <e p="ErrorViewModel.cs" t="Include" />
           <e p="GetMoviesViewModel.cs" t="Include" />
           <e p="MovieModel.cs" t="Include" />
+          <e p="MovieRankModel.cs" t="Include" />
           <e p="RetrieveMovieViewModel.cs" t="Include" />
           <e p="UserInfoViewModel.cs" t="Include" />
           <e p="UserPhoto.cs" t="Include" />
@@ -219,6 +220,7 @@
             <e p="Delete_Movie.cshtml" t="Include" />
             <e p="Movie.cshtml" t="Include" />
             <e p="Movies.cshtml" t="Include" />
+            <e p="Rank_Movie.cshtml" t="Include" />
             <e p="Who_Added_It.cshtml" t="Include" />
             <e p="Who_Ranked_It.cshtml" t="Include" />
           </e>
@@ -327,6 +329,7 @@
           <e p="AddMovieViewModel.cs" t="Include" />
           <e p="AddUserViewModel.cs" t="Include" />
           <e p="Movie.cs" t="Include" />
+          <e p="MovieRankModel.cs" t="Include" />
           <e p="MovieUserRanked.cs" t="Include" />
           <e p="RetrieveMovieViewModel.cs" t="Include" />
           <e p="User.cs" t="Include" />
@@ -336,6 +339,10 @@
           <e p="20200621214518_InitialCreate.Designer.cs" t="Include" />
           <e p="20200624121755_second.cs" t="Include" />
           <e p="20200624121755_second.Designer.cs" t="Include" />
+          <e p="20200626121857_third.cs" t="Include" />
+          <e p="20200626121857_third.Designer.cs" t="Include" />
+          <e p="20200626123204_forth.cs" t="Include" />
+          <e p="20200626123204_forth.Designer.cs" t="Include" />
           <e p="ApplicationDbContextModelSnapshot.cs" t="Include" />
         </e>
         <e p="obj" t="ExcludeRecursive">
@@ -356,8 +363,17 @@
             <e p="1download20152403372.jpg" t="Include" />
             <e p="2download20172419648.jpg" t="Include" />
             <e p="3download20222423417.jpg" t="Include" />
+            <e p="6fa84690e3cdcd73c2ee89683825ef0d20502625497.jpg" t="Include" />
             <e p="avatar.jpg" t="Include" />
+            <e p="dossswnload20572645444.jpg" t="Include" />
+            <e p="ford-v-ferrari-1200-120542656916.jpg" t="Include" />
             <e p="interstellar20202405556.jpg" t="Include" />
+            <e p="KPlXyDvYhB20312650651.jpg" t="Include" />
+            <e p="maxresdefault20132658359.jpg" t="Include" />
+            <e p="qaadownload20422639900.jpg" t="Include" />
+            <e p="qqdownload20592646756.jpg" t="Include" />
+            <e p="share20052602303.jpg" t="Include" />
+            <e p="WIND-RIVER20072639361.jpeg" t="Include" />
           </e>
         </e>
       </e>

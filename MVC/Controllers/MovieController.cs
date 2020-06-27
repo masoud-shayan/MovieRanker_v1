@@ -64,6 +64,7 @@ namespace MVC.Controllers
         public async Task<ActionResult<RetrieveMovieViewModel>> Index(string movieName)
         {
             var access_token = await HttpContext.GetTokenAsync("access_token");
+            ViewData["access_token"] = access_token; // for delete button
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier); // will give the user's userId
 
             
@@ -170,7 +171,6 @@ namespace MVC.Controllers
 
             httpResponse.EnsureSuccessStatusCode();
 
-            // string userIdResponse = await httpResponse.Content.ReadAsStringAsync();
 
 
             // ------- call the Api to add new movie with this current User
@@ -201,10 +201,12 @@ namespace MVC.Controllers
 
                     httpResponse.EnsureSuccessStatusCode();
 
-                    return Ok(new
-                    {
-                        createMovieResponseContent
-                    });
+                    // return Ok(new
+                    // {
+                    //     createMovieResponseContent
+                    // });
+
+                    return RedirectToAction(nameof(Add_New_Movie_Success));
                 }
             }
 
@@ -213,23 +215,67 @@ namespace MVC.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public IActionResult Delete_Movie()
         {
             return View();
         }
 
         [HttpPost]
+        [Authorize]
         [ValidateAntiForgeryToken]
-        public IActionResult Delete_Movie(int i)
+        public async Task<IActionResult>  Delete_Movie(string movieName)
         {
+            
+            var accessToken = await HttpContext.GetTokenAsync("access_token");
+
+
+            var movieClient = _httpClientFactory.CreateClient();
+            movieClient.SetBearerToken(accessToken);
+            
+            // ------- 1. with anonymous  type (class)
+            // var movieRankContent = new StringContent(JsonConvert.SerializeObject(new {MovieName = movieName}), Encoding.UTF8, MediaTypeNames.Application.Json);
+            
+            // ....... 2. with a named type (class)
+            // var movieRankContent = new StringContent(movieName, Encoding.UTF8, MediaTypeNames.Application.Json);
+            var httpResponse = await movieClient.DeleteAsync($"https://localhost:5001/api/Movie/DeleteMovie/{movieName}");
+
+            httpResponse.EnsureSuccessStatusCode();
             return View();
         }
 
-        [HttpPost]
+        [HttpGet]
+        [Authorize]
         [ValidateAntiForgeryToken]
-        public IActionResult Rank_Movie(int i)
+        public async Task<IActionResult> Rank_Movie()
         {
-            return Redirect(nameof(Index));
+            return View();
+        }
+        
+
+        [HttpPost]
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Rank_Movie(int RankInputId , string movieName )
+        {
+
+
+
+            var accessToken = await HttpContext.GetTokenAsync("access_token");
+
+
+            var movieClient = _httpClientFactory.CreateClient();
+            movieClient.SetBearerToken(accessToken);
+            
+            // ------- 1. with anonymous  type (class)
+            // var movieRankContent = new StringContent(JsonConvert.SerializeObject(new {MovieName = movieName , MovieRank = RankInputId }), Encoding.UTF8, MediaTypeNames.Application.Json);
+            
+            // ....... 2. with a named type (class)
+            var movieRankContent = new StringContent(JsonConvert.SerializeObject(new MovieRankModel{MovieName = movieName , MovieRank = RankInputId }), Encoding.UTF8, MediaTypeNames.Application.Json);
+            var httpResponse = await movieClient.PostAsync("https://localhost:5001/api/Movie/RankMovie", movieRankContent);
+
+            httpResponse.EnsureSuccessStatusCode();
+            return View();
         }
 
 
@@ -319,11 +365,12 @@ namespace MVC.Controllers
         [Authorize]
         public IActionResult Add_New_Movie_Success()
         {
-            var accessToken = HttpContext.GetTokenAsync("access_token").Result;
-            return Ok(new
-            {
-                accessToken
-            });
+            
+            // var accessToken = HttpContext.GetTokenAsync("access_token").Result;
+            // return Ok(new
+            // {
+            //     accessToken
+            // });
 
             return View();
         }

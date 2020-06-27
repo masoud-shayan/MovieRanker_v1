@@ -16,13 +16,13 @@ namespace MVC.Models
         public string Description{ get; set; }
         
         [Required]
-        [Range(2021,1800, ErrorMessage ="Value must be between {1800} and {2021}.")]
+        [Range(1800,2021, ErrorMessage ="Value must be between {1800} and {2021}.")]
         public int ReleaseDate{ get; set; }
 
         [Required] 
         public string Director{ get; set; }
         
-        [Required]
+        // [Required]
         [Range(1, 5 ,ErrorMessage ="Value must be between {1} and {5}.")]
         public double Rank{ get; set; }
 
@@ -37,7 +37,7 @@ namespace MVC.Models
         
         
         public string ImagePath{ get; set; }
-        public int OverallRank { get; set; }
+        public double OverallRank { get; set; }
         public int RankCount { get; set; }
         
         // relations

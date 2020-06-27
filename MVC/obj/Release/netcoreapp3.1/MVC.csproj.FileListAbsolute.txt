@@ -85,3 +85,4 @@ C:\Users\Alekhandr0\Desktop\dot-net-core\PracticalApps\MovieRanker_v1\MovieRanke
 C:\Users\Alekhandr0\Desktop\dot-net-core\PracticalApps\MovieRanker_v1\MovieRanker_v1\MVC\obj\Release\netcoreapp3.1\Razor\Views\Movie\Movie.cshtml.g.cs
 C:\Users\Alekhandr0\Desktop\dot-net-core\PracticalApps\MovieRanker_v1\MovieRanker_v1\MVC\obj\Release\netcoreapp3.1\Razor\Views\Movie\Movies.cshtml.g.cs
 C:\Users\Alekhandr0\Desktop\dot-net-core\PracticalApps\MovieRanker_v1\MovieRanker_v1\MVC\obj\Release\netcoreapp3.1\Razor\Views\Home\CheckUser.cshtml.g.cs
+C:\Users\Alekhandr0\Desktop\dot-net-core\PracticalApps\MovieRanker_v1\MovieRanker_v1\MVC\obj\Release\netcoreapp3.1\Razor\Views\Movie\Rank_Movie.cshtml.g.cs
