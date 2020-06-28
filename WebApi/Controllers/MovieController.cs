@@ -321,9 +321,9 @@ namespace WebApi.Controllers
                 
                 usersList.Add(new User
                 {
-                    Id = movie.Id,    // does not mean anything !!! , just a workaround to avoid getting error :) !
+                    Id = Guid.Empty,    // does not mean anything !!! , just a workaround to avoid getting error :) !
                     UserName = "nothing",
-                    UserImage = "nothing"
+                    UserImage = string.Empty
                 });
             }
             else
@@ -350,52 +350,149 @@ namespace WebApi.Controllers
             return usersList;
         }
 
-        [HttpGet("{userId}")]
+        [HttpGet]
         [Authorize]
-        public async Task<ActionResult<IList<Entities.Movie>>> AddedMoviesByUser(Guid userId)
+        public async Task<ActionResult<IList<Movie>>> AddedMoviesByUser()
         {
-            var user = await _applicationDb.Users.FindAsync(userId);
+            
+            // -------- take access token from current user context
+            var userId = await TakeUserIdByAccessToken();
+
+            if (userId.Equals("Unauthorized"))
+            {
+                return Unauthorized();
+            }
+            
+            
+
+            var user = await _applicationDb.Users.FindAsync(new Guid(userId));
 
             if (user == null)
             {
-                return NotFound();
+                return Unauthorized();
             }
+            
+
+            var movieList = await _applicationDb.Movies
+                .Where(m => m.UserId == user.Id).ToListAsync();
+
+            
+            // -------to avoid from Json.JsonException Error: A possible object cycle was detected which is
+            // -------not supported. This can either be due to a cycle or if the obje
+            //------- ct depth is larger than the maximum allowed depth of 32.
+            var movies = new List<Movie>();
 
 
-            // var extractedUser = await _applicationDb.Users.Include(u => u.Movies).FirstOrDefaultAsync(u => u.Id == userId);
-            // ActionResult<IList<Entities.Movie>> movies = extractedUser.Movies.ToList();
-
-
-            var movies = user.Movies.ToList();
-
+            if (movieList.IsNullOrEmpty())
+            {
+                movies.Add(new Movie
+                {
+                    Id = Guid.Empty ,
+                    Name = "nothing" ,
+                    Description = string.Empty,
+                    ReleaseDate = 0 ,
+                    Director = string.Empty ,
+                    OverallRank = 0 ,
+                    RankCount = 0,
+                    ImagePath  = string.Empty,
+                    CreatedDate = DateTime.Now ,
+                    UserId = Guid.Empty ,
+                });
+            }
+            else
+            {
+                foreach (var movie in movieList)
+                {
+                    movies.Add(new Movie
+                    {
+                        Id = movie.Id ,
+                        Name = movie.Name ,
+                        Description = movie.Description,
+                        ReleaseDate = movie.ReleaseDate ,
+                        Director = movie.Director ,
+                        OverallRank = movie.OverallRank ,
+                        RankCount = movie.RankCount,
+                        ImagePath  = movie.ImagePath,
+                        CreatedDate = movie.CreatedDate ,
+                        UserId = movie.UserId ,
+                    });
+                }
+            }
+            
 
             return movies;
         }
 
 
-        [HttpGet("{userId}")]
+        [HttpGet]
         [Authorize]
-        public async Task<ActionResult<IList<Entities.Movie>>> RankedMoviesByUser(Guid userId)
+        public async Task<ActionResult<IList<Movie>>> RankedMoviesByUser()
         {
-            var user = await _applicationDb.Users.FindAsync(userId);
+            // -------- take access token from current user context
+            var userId = await TakeUserIdByAccessToken();
+
+            if (userId.Equals("Unauthorized"))
+            {
+                return Unauthorized();
+            }
+            
+            
+
+            var user = await _applicationDb.Users.FindAsync(new Guid(userId));
 
             if (user == null)
             {
-                return NotFound();
+                return Unauthorized();
             }
+            
+
+            var movieUserRankedsList = await _applicationDb.MovieUserRankeds
+                .Include(mur => mur.Movie)
+                .Where(mur => mur.UserId == user.Id).ToListAsync();
+
+            
+            // -------to avoid from Json.JsonException Error: A possible object cycle was detected which is
+            // -------not supported. This can either be due to a cycle or if the obje
+            //------- ct depth is larger than the maximum allowed depth of 32.
+            var movies = new List<Movie>();
 
 
-            var x = _applicationDb.Users
-                .Where(u => u.Id == userId)
-                .Include(u => u.MoviesUsersRanked)
-                .ThenInclude(mur => mur.Movie);
-
-
-            foreach (var u in x)
+            if (movieUserRankedsList.IsNullOrEmpty())
             {
+                movies.Add(new Movie
+                {
+                    Id = Guid.Empty ,
+                    Name = "nothing" ,
+                    Description = string.Empty,
+                    ReleaseDate = 0 ,
+                    Director = string.Empty ,
+                    OverallRank = 0 ,
+                    RankCount = 0,
+                    ImagePath  = string.Empty,
+                    CreatedDate = DateTime.Now ,
+                    UserId = Guid.Empty ,
+                });
             }
-
-            var movies = user.Movies.ToList();
+            else
+            {
+                foreach (var movie_users in movieUserRankedsList)
+                {
+                    movies.Add(new Movie
+                    {
+                        Id = movie_users.Movie.Id,
+                        Name = movie_users.Movie.Name ,
+                        Description = movie_users.Movie.Description,
+                        ReleaseDate = movie_users.Movie.ReleaseDate ,
+                        Director = movie_users.Movie.Director ,
+                        OverallRank = movie_users.Movie.OverallRank ,
+                        RankCount = movie_users.Movie.RankCount,
+                        ImagePath  = movie_users.Movie.ImagePath,
+                        CreatedDate = movie_users.Movie.CreatedDate ,
+                        UserId = movie_users.Movie.UserId ,
+                    });
+                }
+            }
+            
 
             return movies;
         }

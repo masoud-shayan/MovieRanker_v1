@@ -167,11 +167,6 @@ namespace MVC.Controllers
                 });
             }
 
-            foreach (var x in usersList)
-            {
-                Console.WriteLine("username  :  " + x.UserName);
-            }
-
 
             return View(usersList);
         }

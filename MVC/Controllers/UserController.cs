@@ -32,7 +32,6 @@ namespace MVC.Controllers
         [Authorize]
         public async Task<IActionResult> Index()
         {
-
             var userInfo = await GetUserInfo();
             if (userInfo.Equals("BadRequest"))
             {
@@ -63,12 +62,10 @@ namespace MVC.Controllers
             }
 
             var userInfoModel = await SetUserInfo(userInfo);
-            
-            Console.WriteLine("username    :  "+userInfoModel.UserName);
 
-            
-            
-            
+            Console.WriteLine("username    :  " + userInfoModel.UserName);
+
+
             // ------- call the movie Api to sync user details with identityserver's user details
             var access_token = await HttpContext.GetTokenAsync("access_token");
 
@@ -80,31 +77,30 @@ namespace MVC.Controllers
                 await apiClient.PostAsync("https://localhost:5001/api/Movie/UpdateUser", userInfoModelContent);
 
             httpResponse.EnsureSuccessStatusCode();
-            
+
 
             return View(userInfoModel);
         }
-        
+
 
         [HttpGet("{name}")]
         [Authorize]
         public async Task<IActionResult> Change_Settings(string name)
         {
-
             if (name.Equals("photo"))
             {
                 return Redirect("https://localhost:5005/Auth/UserPhoto");
-            }else if (name.Equals("email"))
+            }
+            else if (name.Equals("email"))
             {
                 return Redirect("https://localhost:5005/Auth/UserEmail");
-            }else if (name.Equals("password"))
+            }
+            else if (name.Equals("password"))
             {
                 return Redirect("https://localhost:5005/Auth/UserPassword");
             }
-            
 
- 
-            
+
             return View(); // redirect to to changes in identity
         }
 
@@ -131,14 +127,71 @@ namespace MVC.Controllers
         [HttpGet]
         public async Task<IActionResult> Added_Movies()
         {
-            return View();
+            
+            // ------- call the movie Api to get all the movies
+            var access_token = await HttpContext.GetTokenAsync("access_token");
+
+            var allMoviesRequest = _httpClientFactory.CreateClient();
+            allMoviesRequest.SetBearerToken(access_token);
+            var allMoviesResponse = await allMoviesRequest.GetAsync("https://localhost:5001/api/Movie/AddedMoviesByUser");
+            allMoviesResponse.EnsureSuccessStatusCode();
+
+            var allMoviesResponseContent = await allMoviesResponse.Content.ReadAsStringAsync();
+            IList<GetMoviesViewModel> movies =
+                JsonConvert.DeserializeObject<IList<GetMoviesViewModel>>(allMoviesResponseContent);
+
+            // ------ fix the movie's image path
+
+            string toBeSearched = "wwwroot";
+            foreach (GetMoviesViewModel movie in movies)
+            {
+                if (!string.IsNullOrEmpty(movie.ImagePath))
+                {
+                    var imagePathTemp = movie.ImagePath;
+                    imagePathTemp = imagePathTemp.Substring(imagePathTemp.IndexOf(toBeSearched) + toBeSearched.Length);
+                    // imagePathTemp = Path.Combine("https://localhost:5001",imagePathTemp);
+                    imagePathTemp = "https://localhost:5001/" + imagePathTemp.Replace(@"\", @"/");
+                    movie.ImagePath = imagePathTemp;
+                }
+            }
+
+            
+            return View(movies);
         }
 
 
         [HttpGet]
         public async Task<IActionResult> Ranked_Movies()
         {
-            return View();
+            // ------- call the movie Api to get all the movies
+            var access_token = await HttpContext.GetTokenAsync("access_token");
+
+            var allMoviesRequest = _httpClientFactory.CreateClient();
+            allMoviesRequest.SetBearerToken(access_token);
+            var allMoviesResponse = await allMoviesRequest.GetAsync("https://localhost:5001/api/Movie/RankedMoviesByUser");
+            allMoviesResponse.EnsureSuccessStatusCode();
+
+            var allMoviesResponseContent = await allMoviesResponse.Content.ReadAsStringAsync();
+            IList<GetMoviesViewModel> movies =
+                JsonConvert.DeserializeObject<IList<GetMoviesViewModel>>(allMoviesResponseContent);
+
+            // ------ fix the movie's image path
+
+            string toBeSearched = "wwwroot";
+            foreach (GetMoviesViewModel movie in movies)
+            {
+                if (!string.IsNullOrEmpty(movie.ImagePath))
+                {
+                    var imagePathTemp = movie.ImagePath;
+                    imagePathTemp = imagePathTemp.Substring(imagePathTemp.IndexOf(toBeSearched) + toBeSearched.Length);
+                    // imagePathTemp = Path.Combine("https://localhost:5001",imagePathTemp);
+                    imagePathTemp = "https://localhost:5001/" + imagePathTemp.Replace(@"\", @"/");
+                    movie.ImagePath = imagePathTemp;
+                }
+            }
+
+            
+            return View(movies);
         }
 
 
@@ -188,7 +241,6 @@ namespace MVC.Controllers
             userInfoDictionary.TryGetValue("email", out string email);
             userInfoDictionary.TryGetValue("UserImagePath", out string UserImagePath);
             userInfoDictionary.TryGetValue("sub", out string userId);
-            
 
 
             var userImagePathNormalizer = "";
@@ -209,13 +261,10 @@ namespace MVC.Controllers
             else
             {
                 string toBeSearched = "wwwroot";
-                userImagePathNormalizer = UserImagePath.Substring(UserImagePath.IndexOf(toBeSearched) + toBeSearched.Length);
-                userImagePathNormalizer = Path.Combine("https://localhost:5005",userImagePathNormalizer);
-                userImagePathNormalizer = "https://localhost:5005/"+userImagePathNormalizer.Replace(@"\",@"/");
-                
-                
-                
-
+                userImagePathNormalizer =
+                    UserImagePath.Substring(UserImagePath.IndexOf(toBeSearched) + toBeSearched.Length);
+                userImagePathNormalizer = Path.Combine("https://localhost:5005", userImagePathNormalizer);
+                userImagePathNormalizer = "https://localhost:5005/" + userImagePathNormalizer.Replace(@"\", @"/");
             }
 
             var UserInfoModel = new UserInfoViewModel
@@ -225,10 +274,6 @@ namespace MVC.Controllers
                 UserImagePath = userImagePathNormalizer,
                 UserId = new Guid(userId)
             };
-
-
-
-            
 
 
             return UserInfoModel;
