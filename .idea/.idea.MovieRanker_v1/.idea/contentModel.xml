@@ -104,10 +104,7 @@
             <e p="site.css" t="Include" />
           </e>
           <e p="favicon.ico" t="Include" />
-          <e p="image" t="Include">
-            <e p="photo_221120112859273.jpg" t="Include" />
-            <e p="tn_1582318861_194820232855211.jpg" t="Include" />
-          </e>
+          <e p="image" t="Include" />
           <e p="js" t="Include">
             <e p="site.js" t="Include" />
           </e>
